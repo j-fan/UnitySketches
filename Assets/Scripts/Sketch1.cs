@@ -48,7 +48,8 @@ public class Sketch1 : MonoBehaviour
        }
 
       Vector3[] line = new Vector3[numLinePoints];
- for(int i=0; i < numLinePoints; i++){
+        for (int i = 0; i < numLinePoints; i++)
+        {
            float tt = 1.0f * i/numLinePoints; //interval between points
            float td = t - delayFactor * tt; //delay to make cool curls
            float te = t - delayFactor * (1- tt);
