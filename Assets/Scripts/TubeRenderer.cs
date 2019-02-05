@@ -15,6 +15,8 @@ public class TubeRenderer : MonoBehaviour
     http://lastbastiongames.com/middleware/
  
     (C) 2008 Last Bastion Games
+
+    Modified by Jane Fan 2019
     */
  
     [Serializable]
@@ -34,7 +36,8 @@ public class TubeRenderer : MonoBehaviour
  
     public TubeVertex[] vertices;
     public Material material;
- 
+    public AnimationCurve tubeWidth;
+
     public int crossSegments = 3;
     private Vector3[] crossPoints;
     private int lastCrossSegments;
@@ -161,7 +164,7 @@ public class TubeRenderer : MonoBehaviour
     }
  
     //sets all the points to points of a Vector3 array, as well as capping the ends.
-    public void SetPoints(Vector3[] points, float radius, Color col)
+    public void SetPoints(Vector3[] points, Color col)
     {
         if (points.Length < 2) return;
         vertices = new TubeVertex[points.Length + 2];
@@ -173,7 +176,7 @@ public class TubeRenderer : MonoBehaviour
  
         for (int p = 0; p < points.Length; p++)
         {
-            vertices[p + 1] = new TubeVertex(points[p], radius, col);
+            vertices[p + 1] = new TubeVertex(points[p], tubeWidth.Evaluate((float)p/points.Length), col);
         }
     }
 }

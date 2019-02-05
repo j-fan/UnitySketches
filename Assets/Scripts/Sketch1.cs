@@ -59,7 +59,7 @@ public class Sketch1 : MonoBehaviour
            line[i] = new Vector3(x,y,z);
        }
        GetComponent<LineRenderer>().SetPositions(line);
-       GetComponent<TubeRenderer>().SetPoints(line, 0.1f,Color.white);
+       GetComponent<TubeRenderer>().SetPoints(line,Color.white);
     }
     
     float nextX(float t, float x, float radius){
