@@ -13,15 +13,18 @@ public class Sketch1 : MonoBehaviour
     List<GameObject> points;
     List<Vector3> centers;  
     List<float> radii;
+    List<TubeRenderer> lines;
     int numFrames = 100;
     
-    public int numLinePoints = 30; //determines looping line resolution
     public float delayFactor = 2.0f;
     public int rangeX = 5;
     public int rangeY = 5;
     public int rangeZ = 2;
     public GameObject pointObj;
     public int numPoints = 20;
+    public int numLines = 10;
+    public TubeRenderer tubeRenderer;
+    public int numLinePoints = 30;
 
     // Start is called before the first frame update
     void Start()
@@ -29,7 +32,12 @@ public class Sketch1 : MonoBehaviour
         points = new List<GameObject>();
         centers = new List<Vector3>();
         radii = new List<float>();
-        GetComponent<LineRenderer>().positionCount = numLinePoints;
+        lines = new List<TubeRenderer>();
+
+        for(int i=0; i < numLines; i++) {
+            TubeRenderer tr = Instantiate(tubeRenderer,Vector3.zero,Quaternion.identity);
+            lines.Add(tr);
+        }
 
         for(int i=0; i < numPoints; i++) {
             points.Add(Instantiate(pointObj) as GameObject);
@@ -47,21 +55,24 @@ public class Sketch1 : MonoBehaviour
             points[i].transform.position = new Vector3(nextX(t, centers[i].x, radii[i]), nextY(t, centers[i].y, radii[i]),centers[i].z);
        }
 
-      Vector3[] line = new Vector3[numLinePoints];
-        for (int i = 0; i < numLinePoints; i++)
-        {
-           float tt = 1.0f * i/numLinePoints; //interval between points
-           float td = t - delayFactor * tt; //delay to make cool curls
-           float te = t - delayFactor * (1- tt);
-           float x = Mathf.Lerp(nextX(td, centers[0].x, radii[0]),nextX(te, centers[1].x, radii[1]),tt);
-           float y = Mathf.Lerp(nextY(td, centers[0].y, radii[0]),nextY(te, centers[1].y, radii[1]),tt);
-           float z = Mathf.Lerp(centers[0].z,centers[1].z,tt);
-           line[i] = new Vector3(x,y,z);
-       }
-       GetComponent<LineRenderer>().SetPositions(line);
-       GetComponent<TubeRenderer>().SetPoints(line,Color.white);
+        for (int j = 0; j < numLines; j++){
+            Vector3[] line = new Vector3[numLinePoints];
+            int a = 0; //choose start point of line
+            int b = j; //choose end point of line
+            for (int i = 0; i < numLinePoints; i++)
+            {
+                float tt = 1.0f * i/numLinePoints; //interval between points
+                float td = t - delayFactor * tt; //delay to make cool curls
+                float te = t - delayFactor * (1- tt);
+                float x = Mathf.Lerp(nextX(td, centers[a].x, radii[a]),nextX(te, centers[b].x, radii[b]),tt);
+                float y = Mathf.Lerp(nextY(td, centers[a].y, radii[a]),nextY(te, centers[b].y, radii[b]),tt);
+                float z = Mathf.Lerp(centers[a].z,centers[b].z,tt);
+                line[i] = new Vector3(x,y,z);
+            }
+            lines[j].SetPoints(line,Color.white);
+         }
     }
-    
+
     float nextX(float t, float x, float radius){
     return x + Mathf.Cos(Mathf.PI * 2 *t) * radius;
     }
