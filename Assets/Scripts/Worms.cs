@@ -8,7 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Sketch1 : MonoBehaviour
+public class Worms : MonoBehaviour
 {
     List<GameObject> points;
     List<Vector3> centers;  
