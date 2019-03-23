@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,7 +11,15 @@ public class StrangeAttractors : MonoBehaviour
 
     public enum AttractorType {
         Lorenz,
-        Dadras
+        Dadras,
+        Thomas,
+        Aizawa,
+        Chen,
+        Halvorsen,
+        RabinovichFabrikant,
+        ThreeScroll,
+        WangSu,
+        Sprott
     }
     public AttractorType attractorType;
 
@@ -43,6 +52,30 @@ public class StrangeAttractors : MonoBehaviour
                 case AttractorType.Lorenz:
                     particles[i].position = applyLorenz(particles[i].position);
                     break;
+                case AttractorType.Aizawa:
+                    particles[i].position = applyAizawa(particles[i].position);
+                    break;   
+                case AttractorType.Thomas:
+                    particles[i].position = applyThomas(particles[i].position);
+                    break;
+                case AttractorType.Sprott:
+                    particles[i].position = applySprott(particles[i].position);
+                    break;
+                case AttractorType.Chen:
+                    particles[i].position = applyChen(particles[i].position);
+                    break;  
+                case AttractorType.Halvorsen:
+                    particles[i].position = applyHalvorsen(particles[i].position);
+                    break;      
+                case AttractorType.RabinovichFabrikant:
+                    particles[i].position = applyRabinovichFabrikant(particles[i].position);
+                    break;  
+                case AttractorType.ThreeScroll:
+                    particles[i].position = applyThreeScroll(particles[i].position);
+                    break;          
+                case AttractorType.WangSu:
+                    particles[i].position = applyWangSu(particles[i].position);
+                    break;                    
                 default:
                     particles[i].position = applyDadras(particles[i].position);
                     break;
@@ -51,6 +84,81 @@ public class StrangeAttractors : MonoBehaviour
         // save modified particles
         particleSys.SetParticles(particles,particles.Length);
 
+    }
+
+    private Vector3 applyAizawa(Vector3 p)
+    {
+        float a = 0.95f;
+        float b = 0.7f;
+        float c = 0.6f;
+        float d = 3.5f;
+        float e = 0.25f;
+        float f = 0.1f;
+        
+        float dt = 0.01f;
+        float dx = ((p.z - b)*p.x - d*p.y);
+        float dy = d * p.x + (p.z - b)*p.y;
+        float dz = c + a*p.z - (Mathf.Pow(p.z,3)/3.0f) - (Mathf.Pow(p.x,2) + Mathf.Pow(p.y,2))*(1 + e*p.z) + f*p.z*Mathf.Pow(p.x,3); 
+        dx *= dt;
+        dy *= dt;
+        dz *= dt;
+        float x = p.x + dx;
+        float y = p.y + dy;
+        float z = p.z + dz;   
+        return new Vector3(x,y,z);   
+    }
+
+    Vector3 applyWangSu(Vector3 position)
+    {
+        throw new NotImplementedException();
+    }
+
+    Vector3 applyThreeScroll(Vector3 position)
+    {
+        throw new NotImplementedException();
+    }
+
+    Vector3 applyRabinovichFabrikant(Vector3 position)
+    {
+        throw new NotImplementedException();
+    }
+    Vector3 applyHalvorsen(Vector3 position)
+    {
+        throw new NotImplementedException();
+    }
+
+    Vector3 applyChen(Vector3 position)
+    {
+        throw new NotImplementedException();
+    }
+
+    Vector3 applySprott(Vector3 p)
+    {
+        float a = 2.07f;
+        float b = 1.79f;
+        
+        float dt = 0.01f;
+        float dx = (p.y + a*p.x*p.y + p.x*p.z) * dt;
+        float dy = (1 - b*Mathf.Pow(p.x,2) + p.y*p.z) * dt;
+        float dz = (p.x - Mathf.Pow(p.x,2) - Mathf.Pow(p.y,2)) * dt;
+        float x = p.x + dx;
+        float y = p.y + dy;
+        float z = p.z + dz;   
+        return new Vector3(x,y,z); 
+    }
+
+    Vector3 applyThomas(Vector3 position)
+    {
+        float b = 0.208186f;
+        float dt = 0.01f;
+
+        float dx = (Mathf.Sin(position.y) - b * position.x) * dt;
+        float dy = (Mathf.Sin(position.z) - b * position.y) * dt;
+        float dz = (Mathf.Sin(position.x) - b * position.z) * dt;
+        float x = position.x + dx;
+        float y = position.y + dy;
+        float z = position.z + dz;   
+        return new Vector3(x,y,z);    
     }
 
     Vector3 applyLorenz(Vector3 position){
