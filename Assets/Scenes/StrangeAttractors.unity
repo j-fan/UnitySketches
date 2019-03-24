@@ -1696,8 +1696,8 @@ ParticleSystem:
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 0}
-        key1: {r: 1, g: 1, b: 1, a: 1}
-        key2: {r: 1, g: 0.72474647, b: 0.13235295, a: 1}
+        key1: {r: 1, g: 1, b: 1, a: 0.39215687}
+        key2: {r: 1, g: 0.72474647, b: 0.13235295, a: 0.039215688}
         key3: {r: 0.32352942, g: 0.7760648, b: 1, a: 0}
         key4: {r: 0, g: 0.25517225, b: 1, a: 0}
         key5: {r: 0, g: 0, b: 0, a: 0}
@@ -5054,7 +5054,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2e94cb03bf01594294e241f1b0379db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attractorType: 8
+  attractorType: 6
 --- !u!95 &2062291350
 Animator:
   serializedVersion: 3

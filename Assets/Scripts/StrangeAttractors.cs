@@ -33,6 +33,21 @@ public class StrangeAttractors : MonoBehaviour
         particleSys = GetComponent<ParticleSystem>();
         particleSysMain = particleSys.main;
         particleSysMain.simulationSpace = ParticleSystemSimulationSpace.Local;
+        var trails = particleSys.trails;
+        
+        // scale attractors to fit into view
+        switch(attractorType){
+            case AttractorType.ThreeScroll:
+                transform.localScale = new Vector3(0.1f,0.1f,0.1f);
+                trails.widthOverTrail = 0.4f;
+                break;
+            case AttractorType.Chen:
+                transform.localScale = new Vector3(0.8f,0.8f,0.8f);
+                break;
+            default:
+                transform.localScale = new Vector3(1f,1f,1f);
+                break;
+        }
     }
 
     void LateUpdate()
@@ -84,6 +99,7 @@ public class StrangeAttractors : MonoBehaviour
                     particles[i].position = applyDadras(particles[i].position);
                     break;
             }
+            particles[i].position = Vector3.ClampMagnitude(particles[i].position,500);
         }
         // save modified particles
         particleSys.SetParticles(particles,particles.Length);
@@ -101,9 +117,11 @@ public class StrangeAttractors : MonoBehaviour
         float dx = (-a*p.x - Mathf.Pow(p.y,2) - Mathf.Pow(p.z,2) + a*f) * dt;
         float dy = (-p.y + p.x*p.y - b*p.x*p.z + g) * dt;
         float dz = (-p.z + b*p.x*p.y + p.x*p.z) * dt;
+        
         float x = p.x + dx;
         float y = p.y + dy;
         float z = p.z + dz;   
+        
         return new Vector3(x,y,z);   
     }
 
@@ -127,13 +145,15 @@ public class StrangeAttractors : MonoBehaviour
         dx *= dt;
         dy *= dt;
         dz *= dt;
+        
         float x = p.x + dx;
         float y = p.y + dy;
         float z = p.z + dz;   
+        
         return new Vector3(x,y,z);   
     }
 
-    Vector3 applyWangSu(Vector3 position)
+    Vector3 applyWangSu(Vector3 p)
     {
         throw new NotImplementedException();
     }
@@ -159,34 +179,70 @@ public class StrangeAttractors : MonoBehaviour
         float x = p.x + dx;
         float y = p.y + dy;
         float z = p.z + dz;   
+        
         return new Vector3(x,y,z);   
     }
 
-    Vector3 applyRabinovichFabrikant(Vector3 position)
+    Vector3 applyRabinovichFabrikant(Vector3 p)
     {
-        throw new NotImplementedException();
+        float a = 0.14f;
+        float b = 0.1f;
+        float dx = p.y * (p.z - 1 + Mathf.Pow(p.x,2)) + b*p.x;
+        float dy = p.x * (3*p.z + 1 - Mathf.Pow(p.x,2)) + b*p.y;
+        float dz = -2 * p.z * (a + p.x * p.y);
+
+        float dt = 0.003f;
+        dx *= dt;
+        dy *= dt;
+        dz *= dt;
+
+        float x = p.x + dx;
+        float y = p.y + dy;
+        float z = p.z + dz;  
+
+        Vector3 position =  new Vector3(x,y,z); 
+        return Vector3.ClampMagnitude(position,100);    
     }
-    Vector3 applyHalvorsen(Vector3 position)
+    Vector3 applyHalvorsen(Vector3 p)
     {
-        throw new NotImplementedException();
+        float a = 1.89f;
+        
+        float dx = -a*p.x - 4*p.y - 4*p.z - Mathf.Pow(p.y,2);
+        float dy = -a*p.y - 4*p.z - 4*p.x - Mathf.Pow(p.z,2);
+        float dz = -a*p.z - 4*p.x - 4*p.y - Mathf.Pow(p.x,2);
+
+        float dt = 0.00f;
+        dx *= dt;
+        dy *= dt;
+        dz *= dt;
+        
+        float x = p.x + dx;
+        float y = p.y + dy;
+        float z = p.z + dz;
+        
+        return new Vector3(x,y,z) * 0.94f;
     }
 
-    Vector3 applyChen(Vector3 position)
+    Vector3 applyChen(Vector3 p)
     {
         float a = 5f;
         float b = -10f;
         float c = -0.38f;
-        float dx = a*position.x - position.y*position.z;
-        float dy = b*position.y + position.x*position.z;
-        float dz= c*position.z + (position.x*position.y/3.0f);
-        float dt = 0.01f;
+        
+        float dx = a*p.x - p.y*p.z;
+        float dy = b*p.y + p.x*p.z;
+        float dz= c*p.z + (p.x*p.y/3.0f);
+        
+        float dt = 0.02f;
         dx *= dt;
         dy *= dt;
         dz *= dt;
-        float x = position.x + dx;
-        float y = position.y + dy;
-        float z = position.z + dz;
-        return new Vector3(x,y,z);
+        
+        float x = p.x + dx;
+        float y = p.y + dy;
+        float z = p.z + dz;
+        
+        return new Vector3(x,y,z) * 0.94f;
     }
 
     Vector3 applySprott(Vector3 p)
@@ -198,27 +254,31 @@ public class StrangeAttractors : MonoBehaviour
         float dx = (p.y + a*p.x*p.y + p.x*p.z) * dt;
         float dy = (1 - b*Mathf.Pow(p.x,2) + p.y*p.z) * dt;
         float dz = (p.x - Mathf.Pow(p.x,2) - Mathf.Pow(p.y,2)) * dt;
+        
         float x = p.x + dx;
         float y = p.y + dy;
         float z = p.z + dz;   
+        
         return new Vector3(x,y,z); 
     }
 
-    Vector3 applyThomas(Vector3 position)
+    Vector3 applyThomas(Vector3 p)
     {
         float b = 0.208186f;
+        
         float dt = 0.01f;
-
-        float dx = (Mathf.Sin(position.y) - b * position.x) * dt;
-        float dy = (Mathf.Sin(position.z) - b * position.y) * dt;
-        float dz = (Mathf.Sin(position.x) - b * position.z) * dt;
-        float x = position.x + dx;
-        float y = position.y + dy;
-        float z = position.z + dz;   
+        float dx = (Mathf.Sin(p.y) - b * p.x) * dt;
+        float dy = (Mathf.Sin(p.z) - b * p.y) * dt;
+        float dz = (Mathf.Sin(p.x) - b * p.z) * dt;
+        
+        float x = p.x + dx;
+        float y = p.y + dy;
+        float z = p.z + dz;   
+        
         return new Vector3(x,y,z);    
     }
 
-    Vector3 applyLorenz(Vector3 position){
+    Vector3 applyLorenz(Vector3 p){
         // constants for lorenz attractor
         // a,b,c equivalent to sigma, rho, beta in original equations
         // interesting starting values for constants can eb found here:
@@ -229,16 +289,18 @@ public class StrangeAttractors : MonoBehaviour
         // dt is time
         float dt = 0.01f;
         // calculate the 3 equations of lorenz
-        float dx = (a * (position.y - position.x)) * dt;
-        float dy = (position.x * (b - position.z) - position.y) * dt;
-        float dz = ((position.x * position.y) - (c * position.z)) * dt;
-        float x = position.x + dx;
-        float y = position.y + dy;
-        float z = position.z + dz;   
+        float dx = (a * (p.y - p.x)) * dt;
+        float dy = (p.x * (b - p.z) - p.y) * dt;
+        float dz = ((p.x * p.y) - (c * p.z)) * dt;
+        
+        float x = p.x + dx;
+        float y = p.y + dy;
+        float z = p.z + dz;   
+        
         return new Vector3(x,y,z);    
     }
 
-    Vector3 applyDadras(Vector3 position){
+    Vector3 applyDadras(Vector3 p){
         float a = 3;
         float b = 2.7f;
         float c = 1.7f;
@@ -246,12 +308,14 @@ public class StrangeAttractors : MonoBehaviour
         float e = 9f;
         
         float dt = 0.01f;
-        float dx = (position.y - (a * position.x) + (b * position.y * position.z)) * dt;
-        float dy = ((c * position.y) - (position.x * position.z) + position.z) * dt;
-        float dz = ((d * position.x * position.y) - (e * position.z)) * dt;
-        float x = position.x + dx;
-        float y = position.y + dy;
-        float z = position.z + dz;   
+        float dx = (p.y - (a * p.x) + (b * p.y * p.z)) * dt;
+        float dy = ((c * p.y) - (p.x * p.z) + p.z) * dt;
+        float dz = ((d * p.x * p.y) - (e * p.z)) * dt;
+        
+        float x = p.x + dx;
+        float y = p.y + dy;
+        float z = p.z + dz;   
+        
         return new Vector3(x,y,z);         
     }
 }
