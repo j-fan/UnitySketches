@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 170076734}
-  m_IndirectSpecularColor: {r: 0.028184315, g: 0.028184315, b: 0.028184315, a: 1}
+  m_IndirectSpecularColor: {r: 0.02818431, g: 0.02818431, b: 0.02818431, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -612,29 +612,29 @@ ParticleSystem:
         m_RotationOrder: 4
     startColor:
       serializedVersion: 2
-      minMaxState: 2
+      minMaxState: 1
       minColor: {r: 0, g: 0.5956452, b: 1, a: 1}
       maxColor: {r: 0, g: 1, b: 0.9454925, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 0.28676468, g: 0, b: 0, a: 0}
-        key1: {r: 1, g: 0.03717411, b: 0.0067887227, a: 1}
+        key0: {r: 1, g: 0.26896554, b: 0, a: 1}
+        key1: {r: 1, g: 0.8084506, b: 0.008047581, a: 1}
         key2: {r: 1, g: 0.72474647, b: 0.13235295, a: 1}
         key3: {r: 0.32352942, g: 0.7760648, b: 1, a: 0}
         key4: {r: 0, g: 0.25517225, b: 1, a: 0}
         key5: {r: 0, g: 0, b: 0, a: 0}
         key6: {r: 0, g: 0, b: 0, a: 0}
         key7: {r: 0, g: 0, b: 0, a: 0}
-        ctime0: 3662
-        ctime1: 19661
+        ctime0: 6361
+        ctime1: 55512
         ctime2: 32382
         ctime3: 53585
         ctime4: 65535
         ctime5: 0
         ctime6: 0
         ctime7: 0
-        atime0: 578
-        atime1: 4433
+        atime0: 5783
+        atime1: 56283
         atime2: 61295
         atime3: 65535
         atime4: 0
@@ -642,8 +642,8 @@ ParticleSystem:
         atime6: 0
         atime7: 0
         m_Mode: 0
-        m_NumColorKeys: 5
-        m_NumAlphaKeys: 4
+        m_NumColorKeys: 2
+        m_NumAlphaKeys: 2
       minGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -992,7 +992,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
-    maxNumParticles: 200
+    maxNumParticles: 300
     size3D: 0
     rotation3D: 0
     gravityModifier:
@@ -1696,8 +1696,8 @@ ParticleSystem:
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 0}
-        key1: {r: 1, g: 1, b: 1, a: 0.39215687}
-        key2: {r: 1, g: 0.72474647, b: 0.13235295, a: 0.039215688}
+        key1: {r: 1, g: 1, b: 1, a: 0.19607843}
+        key2: {r: 1, g: 0.72474647, b: 0.13235295, a: 0.78431374}
         key3: {r: 0.32352942, g: 0.7760648, b: 1, a: 0}
         key4: {r: 0, g: 0.25517225, b: 1, a: 0}
         key5: {r: 0, g: 0, b: 0, a: 0}
@@ -1712,10 +1712,10 @@ ParticleSystem:
         ctime6: 0
         ctime7: 0
         atime0: 0
-        atime1: 1542
-        atime2: 60331
+        atime1: 964
+        atime2: 60716
         atime3: 65535
-        atime4: 0
+        atime4: 65535
         atime5: 0
         atime6: 0
         atime7: 0
@@ -5054,7 +5054,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2e94cb03bf01594294e241f1b0379db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attractorType: 6
+  attractorType: 5
 --- !u!95 &2062291350
 Animator:
   serializedVersion: 3

@@ -155,7 +155,24 @@ public class StrangeAttractors : MonoBehaviour
 
     Vector3 applyWangSu(Vector3 p)
     {
-        throw new NotImplementedException();
+        float a = 0.2f;
+        float b = 0.01f;
+        float c = -0.4f;
+
+        float dx = a*p.x + p.y*p.z;
+        float dy = b*p.x + c*p.y - p.x*p.z;
+        float dz = -p.z - p.x*p.y;
+
+        float dt = 0.01f;
+        dx *= dt;
+        dy *= dt;
+        dz *= dt;
+        
+        float x = p.x + dx;
+        float y = p.y + dy;
+        float z = p.z + dz;   
+        
+        return new Vector3(x,y,z); 
     }
 
     Vector3 applyThreeScroll(Vector3 p)
@@ -205,6 +222,7 @@ public class StrangeAttractors : MonoBehaviour
     }
     Vector3 applyHalvorsen(Vector3 p)
     {
+        //TO DO: investigate why attractor does not look as intended
         float a = 1.89f;
         
         float dx = -a*p.x - 4*p.y - 4*p.z - Mathf.Pow(p.y,2);
