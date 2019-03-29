@@ -99,7 +99,11 @@ public class StrangeAttractors : MonoBehaviour
                     particles[i].position = applyDadras(particles[i].position);
                     break;
             }
-            particles[i].position = Vector3.ClampMagnitude(particles[i].position,500);
+            // prevent particles going to infinity
+            //particles[i].position = Vector3.ClampMagnitude(particles[i].position,500);
+            if(particles[i].position.magnitude > 800){
+                particles[i].startColor = new Color(0,0,0,0);
+            }
         }
         // save modified particles
         particleSys.SetParticles(particles,particles.Length);
@@ -229,7 +233,7 @@ public class StrangeAttractors : MonoBehaviour
         float dy = -a*p.y - 4*p.z - 4*p.x - Mathf.Pow(p.z,2);
         float dz = -a*p.z - 4*p.x - 4*p.y - Mathf.Pow(p.x,2);
 
-        float dt = 0.00f;
+        float dt = 0.01f;
         dx *= dt;
         dy *= dt;
         dz *= dt;
@@ -238,7 +242,7 @@ public class StrangeAttractors : MonoBehaviour
         float y = p.y + dy;
         float z = p.z + dz;
         
-        return new Vector3(x,y,z) * 0.94f;
+        return new Vector3(x,y,z);
     }
 
     Vector3 applyChen(Vector3 p)
