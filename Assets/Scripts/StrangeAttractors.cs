@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(ParticleSystem))]
+[RequireComponent(typeof(BeatsFFT))]
 public class StrangeAttractors : MonoBehaviour
 {
-    // TO DO: add the other attractors
+    // attractors reference
     // https://www.dynamicmath.xyz/strange-attractors/
+    // https://www.flickr.com/photos/39445835@N05/sets/72157691795186384
 
     public enum AttractorType {
         Lorenz,
@@ -20,9 +22,11 @@ public class StrangeAttractors : MonoBehaviour
         RabinovichFabrikant,
         ThreeScroll,
         WangSu,
-        Sprott
+        Sprott,
+        GumowskiMira
     }
     public AttractorType attractorType;
+    public BeatsFFT beatsFFT;
 
     private ParticleSystem particleSys;
     private ParticleSystem.MainModule particleSysMain;
@@ -60,7 +64,12 @@ public class StrangeAttractors : MonoBehaviour
         // load particles
         particleSys.GetParticles(particles);
 
+        // TO DO: convert to velocity instead of position update
+        // by returning dx,dy,dz not x,y,z
+        //Vector3 vel = Vector3.zero;
+
         for (int i = 0; i < particles.Length; i++){
+            
             switch (attractorType){
                 case AttractorType.Dadras:
                     particles[i].position = applyDadras(particles[i].position);
@@ -94,7 +103,10 @@ public class StrangeAttractors : MonoBehaviour
                     break;          
                 case AttractorType.WangSu:
                     particles[i].position = applyWangSu(particles[i].position);
-                    break;                    
+                    break;
+                case AttractorType.GumowskiMira:
+                    particles[i].position = GumowskiMiru(particles[i].position);
+                    break;
                 default:
                     particles[i].position = applyDadras(particles[i].position);
                     break;
@@ -105,9 +117,25 @@ public class StrangeAttractors : MonoBehaviour
                 particles[i].startColor = new Color(0,0,0,0);
             }
         }
+
         // save modified particles
         particleSys.SetParticles(particles,particles.Length);
 
+    }
+
+    // this is a 2d attractor unlike the others so does
+    // not look as good on particles
+    private Vector3 GumowskiMiru(Vector3 p)
+    {
+        float b = 0.982f;
+        float x = b*p.y + GumowskiMirufx(p.x);
+        float y = GumowskiMirufx(x) - p.x;
+        return new Vector3(x,y,0);
+    }
+
+    private float GumowskiMirufx(float x){
+        float a = -0.192f;
+        return a*x + 2*(1 - a)*x*x*Mathf.Pow(1 + x*x, -2);
     }
 
     private Vector3 applyLorenz84(Vector3 p)
