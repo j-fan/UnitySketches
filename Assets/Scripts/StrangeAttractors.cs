@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(ParticleSystem))]
 [RequireComponent(typeof(BeatsFFT))]
@@ -27,6 +28,7 @@ public class StrangeAttractors : MonoBehaviour
     }
     public AttractorType attractorType;
     public BeatsFFT beatsFFT;
+    public float testNoiseIntensity = 1.0f;
 
     private ParticleSystem particleSys;
     private ParticleSystem.MainModule particleSysMain;
@@ -72,7 +74,8 @@ public class StrangeAttractors : MonoBehaviour
             
             switch (attractorType){
                 case AttractorType.Dadras:
-                    particles[i].position = applyDadras(particles[i].position);
+                    particles[i].velocity = applyDadras(particles[i].position)*100 
+                    + (testNoiseIntensity * AddNoiseOnAngle(0,270));
                     break;
                 case AttractorType.Lorenz:
                     particles[i].position = applyLorenz(particles[i].position);
@@ -121,6 +124,22 @@ public class StrangeAttractors : MonoBehaviour
         // save modified particles
         particleSys.SetParticles(particles,particles.Length);
 
+    }
+
+    Vector3 AddNoiseOnAngle(float min, float max)
+    {
+        // Find random angle between min & max inclusive
+        float xNoise = Random.Range(min, max);
+        float yNoise = Random.Range(min, max);
+        float zNoise = Random.Range(min, max);
+
+        // Convert Angle to Vector3
+        Vector3 noise = new Vector3(
+          Mathf.Sin(2 * Mathf.PI * xNoise / 360),
+          Mathf.Sin(2 * Mathf.PI * yNoise / 360),
+          Mathf.Sin(2 * Mathf.PI * zNoise / 360)
+        );
+        return noise;
     }
 
     // this is a 2d attractor unlike the others so does
@@ -362,10 +381,11 @@ public class StrangeAttractors : MonoBehaviour
         float dy = ((c * p.y) - (p.x * p.z) + p.z) * dt;
         float dz = ((d * p.x * p.y) - (e * p.z)) * dt;
         
-        float x = p.x + dx;
-        float y = p.y + dy;
-        float z = p.z + dz;   
+        // float x = p.x + dx;
+        // float y = p.y + dy;
+        // float z = p.z + dz;   
         
-        return new Vector3(x,y,z);         
+        // return new Vector3(x,y,z);       
+        return new Vector3(dx,dy,dz);           
     }
 }
