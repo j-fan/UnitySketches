@@ -7,7 +7,7 @@ public class BeatsFFT : MonoBehaviour {
     float[] asamples = new float[64];
     public float avgFreq = 0.0f;
     public float runningAvgFreq = 0.0f;
-    float alpha = 0.3f; //lowpass filter positions for smooth movement, lower number for more smoothing
+    float alpha = 0.2f; //lowpass filter positions for smooth movement, lower number for more smoothing
 
     // Use this for initialization
     void Start()

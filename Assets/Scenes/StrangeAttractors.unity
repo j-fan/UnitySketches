@@ -370,7 +370,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 216481d614915e74391ca7546ca79f8d, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 2ebeeebe00f83494e9dd206e003be3e9, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -650,7 +650,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 20
+      scalar: 140
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -755,13 +755,13 @@ ParticleSystem:
         m_RotationOrder: 4
     startColor:
       serializedVersion: 2
-      minMaxState: 1
-      minColor: {r: 0, g: 0.5956452, b: 1, a: 1}
-      maxColor: {r: 0, g: 1, b: 0.9454925, a: 1}
+      minMaxState: 2
+      minColor: {r: 1, g: 0.051568095, b: 0, a: 1}
+      maxColor: {r: 1, g: 0.7276479, b: 0, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 1, g: 0.26896554, b: 0, a: 1}
-        key1: {r: 1, g: 0.8084506, b: 0.008047581, a: 1}
+        key0: {r: 1, g: 1, b: 1, a: 1}
+        key1: {r: 1, g: 1, b: 1, a: 1}
         key2: {r: 1, g: 0.72474647, b: 0.13235295, a: 0}
         key3: {r: 0.32352942, g: 0.7760648, b: 1, a: 0}
         key4: {r: 0, g: 0.25517225, b: 1, a: 0}
@@ -4364,7 +4364,7 @@ ParticleSystem:
     lifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.5
+      scalar: 0.1
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -5197,7 +5197,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2e94cb03bf01594294e241f1b0379db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attractorType: 2
+  attractorType: 7
   beatsFFT: {fileID: 2008681526}
 --- !u!95 &2062291350
 Animator:
@@ -5209,7 +5209,7 @@ Animator:
   m_GameObject: {fileID: 2062291345}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 47f7672b040bf244799f21c915180df4, type: 2}
+  m_Controller: {fileID: 9100000, guid: 897395fbc77ea284b8c23150ff306943, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
