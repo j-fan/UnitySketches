@@ -33,7 +33,7 @@ public class StrangeAttractors : MonoBehaviour
     private ParticleSystem.Particle[] particles;
     private ParticleSystem.TrailModule particleTrailModule;
     
-    void Start()
+    private void Start()
     {
         particleSys = GetComponent<ParticleSystem>();
         particleSysMain = particleSys.main;
@@ -55,7 +55,7 @@ public class StrangeAttractors : MonoBehaviour
         }
     }
 
-    void LateUpdate()
+    private void LateUpdate()
     {
         int maxParticles = particleSysMain.maxParticles;
         if (particles == null || particles.Length < maxParticles)
@@ -177,7 +177,7 @@ public class StrangeAttractors : MonoBehaviour
         return new Vector3(dx, dy, dz);   
     }
 
-    Vector3 applyWangSu(Vector3 p)
+    private Vector3 applyWangSu(Vector3 p)
     {
         float a = 0.2f;
         float b = 0.01f;
@@ -195,7 +195,7 @@ public class StrangeAttractors : MonoBehaviour
         return new Vector3(dx, dy, dz); 
     }
 
-    Vector3 applyThreeScroll(Vector3 p)
+    private Vector3 applyThreeScroll(Vector3 p)
     {
         float a = 32.48f;
         float b = 45.84f;
@@ -216,7 +216,7 @@ public class StrangeAttractors : MonoBehaviour
         return new Vector3(dx, dy, dz);   
     }
 
-    Vector3 applyRabinovichFabrikant(Vector3 p)
+    private Vector3 applyRabinovichFabrikant(Vector3 p)
     {
         float a = 0.14f;
         float b = 0.1f;
@@ -232,7 +232,7 @@ public class StrangeAttractors : MonoBehaviour
         Vector3 velocity =  new Vector3(dx, dy, dz); 
         return Vector3.ClampMagnitude(velocity,100);    
     }
-    Vector3 applyHalvorsen(Vector3 p)
+    private Vector3 applyHalvorsen(Vector3 p)
     {
         //TO DO: investigate why attractor does not look as intended
         float a = 1.89f;
@@ -249,7 +249,7 @@ public class StrangeAttractors : MonoBehaviour
         return new Vector3(dx, dy, dz);
     }
 
-    Vector3 applyChen(Vector3 p)
+    private Vector3 applyChen(Vector3 p)
     {
         float a = 5f;
         float b = -10f;
@@ -267,7 +267,7 @@ public class StrangeAttractors : MonoBehaviour
         return new Vector3(dx, dy, dz) * 0.94f;
     }
 
-    Vector3 applySprott(Vector3 p)
+    private Vector3 applySprott(Vector3 p)
     {
         float a = 2.07f;
         float b = 1.79f;
@@ -280,7 +280,7 @@ public class StrangeAttractors : MonoBehaviour
         return new Vector3(dx, dy, dz); 
     }
 
-    Vector3 applyThomas(Vector3 p)
+    private Vector3 applyThomas(Vector3 p)
     {
         float b = 0.208186f;
         
@@ -292,7 +292,7 @@ public class StrangeAttractors : MonoBehaviour
         return new Vector3(dx, dy, dz);    
     }
 
-    Vector3 applyLorenz(Vector3 p){
+    private Vector3 applyLorenz(Vector3 p){
         // constants for lorenz attractor
         // a,b,c equivalent to sigma, rho, beta in original equations
         // interesting starting values for constants can eb found here:
@@ -310,7 +310,7 @@ public class StrangeAttractors : MonoBehaviour
         return new Vector3(dx, dy, dz);    
     }
 
-    Vector3 applyDadras(Vector3 p){
+    private Vector3 applyDadras(Vector3 p){
         float a = 3;
         float b = 2.7f;
         float c = 1.7f;
