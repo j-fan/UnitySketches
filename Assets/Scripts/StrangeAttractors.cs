@@ -119,8 +119,8 @@ public class StrangeAttractors : MonoBehaviour
         }
         // save modified particles
         particleSys.SetParticles(particles,particles.Length);
-        transform.Rotate(40 * beatsFFT.avgFreq, 60 * beatsFFT.avgFreq, 40 * beatsFFT.avgFreq);
-        particleTrailModule.colorOverTrail = new Color(1f, 1f, 1f, (beatsFFT.runningAvgFreq * 5) + 0.1f);
+        transform.Rotate(30 * beatsFFT.avgFreq, 40 * beatsFFT.avgFreq, 30 * beatsFFT.avgFreq, Space.World);
+        particleTrailModule.colorOverTrail = new Color(1f, 1f, 1f, (beatsFFT.runningAvgFreq * 10) + 0.01f);
     }
 
     // this is a 2d attractor unlike the others so does
