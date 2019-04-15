@@ -8,21 +8,21 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Worms : MonoBehaviour
-{
+{   
+    public float DelayFactor = 2.0f;
+    public int RangeX = 5;
+    public int RangeY = 5;
+    public int RangeZ = 2;
+    public GameObject PointObj;
+    public int NumWorms = 30;
+    public TubeRenderer TubeRenderer;
+    public int NumLinePoints = 100;
+
     private List<GameObject> endPoints;
     private List<Worm> worms;
     private int numFrames = 100;
     private FastNoise fastNoise;
     
-    public float delayFactor = 2.0f;
-    public int rangeX = 5;
-    public int rangeY = 5;
-    public int rangeZ = 2;
-    public GameObject pointObj;
-    public int numWorms = 10;
-    public TubeRenderer tubeRenderer;
-    public int numLinePoints = 30;
-
     internal class Worm {
         public Vector3 Centre { get; set; }
         public float MotionRadii { get; set; }
@@ -37,14 +37,23 @@ public class Worms : MonoBehaviour
         worms = new List<Worm>();
         fastNoise = new FastNoise();
 
-        for(int i=0; i < numWorms; i++) {
+        
+
+        for(int i=0; i < NumWorms; i++) {
             Worm worm = new Worm();
-            worm.Renderer = Instantiate(tubeRenderer,Vector3.zero,Quaternion.identity);
-            worm.Centre = new Vector3(Random.Range(-rangeX,rangeX), Random.Range(-rangeY,rangeY), Random.Range(-rangeZ,rangeZ));
-            worm.MotionRadii =  Random.Range(30f,60f);
+            // create centre point for all worms
+            if(i == 0){
+                worm.Centre = Vector3.zero;
+                worm.MotionRadii =  10f;
+            // create end points for all worms
+            } else {
+                worm.Centre = new Vector3(Random.Range(-RangeX,RangeX), Random.Range(-RangeY,RangeY), Random.Range(-RangeZ,RangeZ));
+                worm.MotionRadii =  Random.Range(30f,60f);
+            }
+            worm.Renderer = Instantiate(TubeRenderer,Vector3.zero,Quaternion.identity);
             worm.Seed = Random.Range(1f,9999f);
             worms.Add(worm);
-            endPoints.Add(Instantiate(pointObj) as GameObject);
+            endPoints.Add(Instantiate(PointObj) as GameObject);
         }
    }
 
@@ -53,20 +62,20 @@ public class Worms : MonoBehaviour
     {
        float t = 1.0f * ( Time.frameCount - 1) / numFrames;
 
-        for (int i = 0; i < numWorms; i++){
+        for (int i = 0; i < NumWorms; i++){
             Worm worm = worms[i];
 
             endPoints[i].transform.position = new Vector3(nextXSimplex(t, worm.Centre.x, worm.MotionRadii, worm.Seed), 
             nextYSimplex(t, worm.Centre.y, worm.MotionRadii, worm.Seed),worm.Centre.z);
 
-            Vector3[] line = new Vector3[numLinePoints];
+            Vector3[] line = new Vector3[NumLinePoints];
             int a = 0; //choose start point of line
             int b = i; //choose end point of line
-            for (int j = 0; j < numLinePoints; j++)
+            for (int j = 0; j < NumLinePoints; j++)
             {
-                float tt = 1.0f * j/numLinePoints; //interval between points
-                float td = t - delayFactor * tt; //delay to make cool curls
-                float te = t - delayFactor * (1- tt);
+                float tt = 1.0f * j/NumLinePoints; //interval between points
+                float td = t - DelayFactor * tt; //delay to make cool curls
+                float te = t - DelayFactor * (1- tt);
                 float z = Mathf.Lerp(worms[a].Centre.z,worms[b].Centre.z,tt);
                 float x = Mathf.Lerp(nextXSimplex(td, worms[a].Centre.x, worms[a].MotionRadii, worm.Seed),
                                      nextXSimplex(te, worms[b].Centre.x, worms[b].MotionRadii, worm.Seed),tt);
