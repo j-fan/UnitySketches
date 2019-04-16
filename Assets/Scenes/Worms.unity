@@ -812,7 +812,7 @@ MonoBehaviour:
   noiseStrength: 2
   offset: {x: 0, y: 0, z: 0}
   offsetSpeed: {x: 8, y: 8, z: 8}
-  cellSize: 3
+  cellSize: 1
   drawPreview: 1
 --- !u!4 &1790302267
 Transform:
@@ -822,7 +822,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1790302265}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -20, y: -20, z: -20}
+  m_LocalPosition: {x: -10, y: -10, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
