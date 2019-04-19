@@ -23,7 +23,7 @@ public class Worms : MonoBehaviour
     private int numFrames = 100;
     private FastNoise fastNoise;
     
-    internal class Worm {
+    private class Worm {
         public Vector3 Centre { get; set; }
         public float MotionRadii { get; set; }
         public float Seed { get; set; }
@@ -36,9 +36,7 @@ public class Worms : MonoBehaviour
         endPoints = new List<GameObject>();
         worms = new List<Worm>();
         fastNoise = new FastNoise();
-
         
-
         for(int i=0; i < NumWorms; i++) {
             Worm worm = new Worm();
             // create centre point for all worms
