@@ -18,3 +18,5 @@ particle cloud concept 2
 
 vector fields (again)
 - https://www.instagram.com/p/BpR1k1BgEo2/
+
+flocking
