@@ -43,7 +43,7 @@ public class Flowfield : MonoBehaviour {
                 float zOff = 0f;
                 for (int z = 0; z < gridSize.z; z++)
                 {
-                    float noise = fastNoise.GetSimplex(xOff + offset.x, yOff + offset.y, zOff + offset.z) + 1;
+                    float noise = fastNoise.GetPerlin(xOff + offset.x, yOff + offset.y, zOff + offset.z) + 1;
                     Vector3 noiseDirection = new Vector3(Mathf.Cos(noise * Mathf.PI), Mathf.Sin(noise * Mathf.PI), Mathf.Cos(noise * Mathf.PI));
                     flowFieldDirections[x,y,z] = Vector3.Normalize(noiseDirection);
                     zOff += noiseStrength;

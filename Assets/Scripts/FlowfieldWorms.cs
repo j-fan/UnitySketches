@@ -7,9 +7,11 @@ public class FlowfieldWorms : MonoBehaviour
     public TubeRenderer TubeRenderer;
     public Flowfield Flowfield;
     public int NumWorms = 5;
+    public float WormSpeed = 1f;
 
     private List<Worm> worms = new List<Worm>();
-    private int maxWormVertexes = 20;
+    private int maxWormVertexes = 200;
+    private float minWormVertexDistance = 0.05f;
 
     private class Worm {
         public BoundedQueue<Vector3> PointsQueue { get; set; }
@@ -23,9 +25,9 @@ public class FlowfieldWorms : MonoBehaviour
         {
             Worm worm = new Worm();
             worm.CurrentPos = new Vector3(
-                Random.Range(-5f,5f),
-                Random.Range(-5f,5f),
-                Random.Range(-5f,5f)
+                Random.Range(30f, 40f),
+                Random.Range(30f, 40f),
+                Random.Range(30f, 40f)
             );
             worm.PointsQueue = new BoundedQueue<Vector3>(maxWormVertexes);
             worm.TubeRenderer = Instantiate(TubeRenderer,Vector3.zero,Quaternion.identity);
@@ -38,16 +40,20 @@ public class FlowfieldWorms : MonoBehaviour
         for(int i = 0; i < NumWorms; i++)
         {
             Worm w = worms[i];
-            Vector3Int particlePos = new Vector3Int(
+            Vector3Int flowfieldPos = new Vector3Int(
                         Mathf.FloorToInt(Mathf.Clamp((w.CurrentPos.x / Flowfield.cellSize),0,Flowfield.gridSize.x-1)),
                         Mathf.FloorToInt(Mathf.Clamp((w.CurrentPos.y / Flowfield.cellSize), 0, Flowfield.gridSize.y - 1)),
                         Mathf.FloorToInt(Mathf.Clamp((w.CurrentPos.z / Flowfield.cellSize), 0, Flowfield.gridSize.z - 1))
                         );
-            Vector3 flowVector = Flowfield.flowFieldDirections[particlePos.x, particlePos.y, particlePos.z];
-
-            w.CurrentPos += flowVector * Time.deltaTime * 2f;
-            w.PointsQueue.Enqueue(w.CurrentPos);
-            w.TubeRenderer.SetPoints(w.PointsQueue.ToArray(),Color.white);
+            Vector3 flowVector = Flowfield.flowFieldDirections[flowfieldPos.x, flowfieldPos.y, flowfieldPos.z] * WormSpeed;
+            Vector3 newPos =  w.CurrentPos + flowVector * Time.deltaTime;
+            Vector3 lastPos = w.TubeRenderer.vertices[w.TubeRenderer.vertices.Length -1].point;
+            if(Vector3.Distance(newPos, lastPos) > minWormVertexDistance)
+            {
+                w.PointsQueue.Enqueue(newPos);
+                w.TubeRenderer.SetPoints(w.PointsQueue.ToArray(),Color.white);
+            }
+            w.CurrentPos = newPos;
         }
     }
 }
