@@ -43,15 +43,7 @@ public class FlowfieldWorms : MonoBehaviour
         for(int i = 0; i < NumWorms; i++)
         {
             Worm w = worms[i];
-            Vector3Int flowfieldPos = new Vector3Int(
-                        Mathf.FloorToInt(Mathf.Clamp((w.CurrentPos.x / Flowfield.cellSize),0,Flowfield.gridSize.x-1)),
-                        Mathf.FloorToInt(Mathf.Clamp((w.CurrentPos.y / Flowfield.cellSize), 0, Flowfield.gridSize.y - 1)),
-                        Mathf.FloorToInt(Mathf.Clamp((w.CurrentPos.z / Flowfield.cellSize), 0, Flowfield.gridSize.z - 1))
-                        );
-            Vector3 flowVector = Flowfield.flowFieldDirections[flowfieldPos.x, flowfieldPos.y, flowfieldPos.z] * WormSpeed;
-            // float noise = fastNoise.GetPerlin(w.CurrentPos.x+offset, w.CurrentPos.y+offset, w.CurrentPos.z+offset);
-            // Vector3 flowVector =  new Vector3(Mathf.Cos(noise * Mathf.PI), Mathf.Sin(noise * Mathf.PI), Mathf.Cos(noise * Mathf.PI));
-            
+            Vector3 flowVector = curlNoise(w.CurrentPos) * 20f;            
             Vector3 newPos =  w.CurrentPos + flowVector * Time.deltaTime;
             Vector3 lastPos = w.TubeRenderer.vertices[w.TubeRenderer.vertices.Length -1].point;
             if(Vector3.Distance(newPos, lastPos) > minWormVertexDistance)
@@ -61,5 +53,39 @@ public class FlowfieldWorms : MonoBehaviour
             }
             w.CurrentPos = newPos;
         }
+    }
+    Vector3 snoiseVec3(Vector3 v)
+    {
+
+        float s = fastNoise.GetSimplex(v.x, v.y, v.z);
+        float s1 = fastNoise.GetSimplex(v.y - 19.1f, v.z + 33.4f, v.x + 47.2f);
+        float s2 = fastNoise.GetSimplex(v.z + 74.2f, v.x - 124.5f, v.y + 99.4f);
+        Vector3 c = new Vector3(s, s1, s2);
+        return c;
+
+    }
+
+    Vector3 curlNoise(Vector3 p)
+    {
+
+        float e = .1f;
+        Vector3 dx = new Vector3(e, 0f, 0f);
+        Vector3 dy = new Vector3(0f, e, 0f);
+        Vector3 dz = new Vector3(0f, 0f, e);
+
+        Vector3 p_x0 = snoiseVec3(p - dx);
+        Vector3 p_x1 = snoiseVec3(p + dx);
+        Vector3 p_y0 = snoiseVec3(p - dy);
+        Vector3 p_y1 = snoiseVec3(p + dy);
+        Vector3 p_z0 = snoiseVec3(p - dz);
+        Vector3 p_z1 = snoiseVec3(p + dz);
+
+        float x = p_y1.z - p_y0.z - p_z1.y + p_z0.y;
+        float y = p_z1.x - p_z0.x - p_x1.z + p_x0.z;
+        float z = p_x1.y - p_x0.y - p_y1.x + p_y0.x;
+
+        float divisor = 1.0f / (2.0f * e);
+        return Vector3.Normalize(new Vector3(x, y, z) * divisor);
+
     }
 }
