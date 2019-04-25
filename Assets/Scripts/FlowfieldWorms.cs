@@ -12,6 +12,8 @@ public class FlowfieldWorms : MonoBehaviour
     private List<Worm> worms = new List<Worm>();
     private int maxWormVertexes = 200;
     private float minWormVertexDistance = 0.05f;
+    private FastNoise fastNoise;
+    private float offset = 0.01f;
 
     private class Worm {
         public BoundedQueue<Vector3> PointsQueue { get; set; }
@@ -21,6 +23,7 @@ public class FlowfieldWorms : MonoBehaviour
     
     void Start()
     {
+        fastNoise = new FastNoise();
         for(int i = 0; i < NumWorms; i++)
         {
             Worm worm = new Worm();
@@ -46,6 +49,9 @@ public class FlowfieldWorms : MonoBehaviour
                         Mathf.FloorToInt(Mathf.Clamp((w.CurrentPos.z / Flowfield.cellSize), 0, Flowfield.gridSize.z - 1))
                         );
             Vector3 flowVector = Flowfield.flowFieldDirections[flowfieldPos.x, flowfieldPos.y, flowfieldPos.z] * WormSpeed;
+            // float noise = fastNoise.GetPerlin(w.CurrentPos.x+offset, w.CurrentPos.y+offset, w.CurrentPos.z+offset);
+            // Vector3 flowVector =  new Vector3(Mathf.Cos(noise * Mathf.PI), Mathf.Sin(noise * Mathf.PI), Mathf.Cos(noise * Mathf.PI));
+            
             Vector3 newPos =  w.CurrentPos + flowVector * Time.deltaTime;
             Vector3 lastPos = w.TubeRenderer.vertices[w.TubeRenderer.vertices.Length -1].point;
             if(Vector3.Distance(newPos, lastPos) > minWormVertexDistance)
