@@ -7,7 +7,7 @@ public class FlowfieldWorms : MonoBehaviour
     public TubeRenderer TubeRenderer;
     public int NumWorms = 20;
     public int maxWormVertexes = 100;
-    public float minWormVertexDistance = 0.05f;      // lower numbers = smoother but shorter worms
+    public float minWormVertexDistance = 0.1f;      // lower numbers = smoother but shorter worms
     public float WormSpeed = 1f;                     
 
     // the best noise params to play with are octaves and frequency
@@ -60,15 +60,11 @@ public class FlowfieldWorms : MonoBehaviour
             }
             float dist = Vector3.Distance(newPos, Vector3.zero);
             float step =  attractionSpeed * Time.deltaTime;
-            if(dist > maxDist)
-            {
-                newPos = Vector3.MoveTowards(newPos, Vector3.zero, step);
-                // newPos = new Vector3(
-                //     Mathf.Clamp(newPos.x,0,maxDist),
-                //     Mathf.Clamp(newPos.y,0,maxDist),
-                //     Mathf.Clamp(newPos.z,0,maxDist)
-                // );
-            }
+     
+            float distanceRatio = Mathf.Clamp(dist, 0, maxDist) / maxDist;
+            newPos =  distanceRatio * Vector3.MoveTowards(newPos, Vector3.zero, step) +
+                (1 - distanceRatio) * newPos;
+            
             w.CurrentPos = newPos;
             offset += 0.001f;
         }
