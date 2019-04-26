@@ -7,16 +7,16 @@ public class FlowfieldWorms : MonoBehaviour
     public TubeRenderer TubeRenderer;
     public int NumWorms = 20;
     public int maxWormVertexes = 100;
-    public float WormSpeed = 1f;
+    public float minWormVertexDistance = 0.05f;      // lower numbers = smoother but shorter worms
+    public float WormSpeed = 1f;                     
 
     // the best noise params to play with are octaves and frequency
-    public float frequency = 10f;          // how quickly simplex values change (higher number = smaller curls)
-    public float amplitude = 1f;           // how big the range of simplex values are (effect unknown)
-    public int octaves = 1;                // how many iterations of simplex to use (higher number = more curls)
-    public float persistence = 0.1f;       // how much effect each subsequent iteration has (higher number = enhances effect of octave count)
+    public float frequency = 10f;                    // how quickly simplex values change (higher number = smaller curls)
+    public float amplitude = 1f;                     // how big the range of simplex values are (effect unknown)
+    public int octaves = 1;                          // how many iterations of simplex to use (higher number = more curls)
+    public float persistence = 0.1f;                 // how much effect each subsequent iteration has (higher number = enhances effect of octave count)
 
     private List<Worm> worms = new List<Worm>();
-    private float minWormVertexDistance = 0.05f;
     private FastNoise fastNoise;
     private float offset = 0.01f;
 
