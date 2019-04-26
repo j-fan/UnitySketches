@@ -5,12 +5,17 @@ using UnityEngine;
 public class FlowfieldWorms : MonoBehaviour
 {
     public TubeRenderer TubeRenderer;
-    public Flowfield Flowfield;
-    public int NumWorms = 5;
+    public int NumWorms = 20;
+    public int maxWormVertexes = 100;
     public float WormSpeed = 1f;
 
+    // the best noise params to play with are octaves and frequency
+    public float frequency = 10f;          // how quickly simplex values change (higher number = smaller curls)
+    public float amplitude = 1f;           // how big the range of simplex values are (effect unknown)
+    public int octaves = 1;                // how many iterations of simplex to use (higher number = more curls)
+    public float persistence = 0.1f;       // how much effect each subsequent iteration has (higher number = enhances effect of octave count)
+
     private List<Worm> worms = new List<Worm>();
-    private int maxWormVertexes = 200;
     private float minWormVertexDistance = 0.05f;
     private FastNoise fastNoise;
     private float offset = 0.01f;
@@ -28,9 +33,9 @@ public class FlowfieldWorms : MonoBehaviour
         {
             Worm worm = new Worm();
             worm.CurrentPos = new Vector3(
-                Random.Range(30f, 40f),
-                Random.Range(30f, 40f),
-                Random.Range(30f, 40f)
+                Random.Range(0f, 10f),
+                Random.Range(0f, 10f),
+                Random.Range(0f, 10f)
             );
             worm.PointsQueue = new BoundedQueue<Vector3>(maxWormVertexes);
             worm.TubeRenderer = Instantiate(TubeRenderer,Vector3.zero,Quaternion.identity);
@@ -43,7 +48,7 @@ public class FlowfieldWorms : MonoBehaviour
         for(int i = 0; i < NumWorms; i++)
         {
             Worm w = worms[i];
-            Vector3 flowVector = curlNoise(w.CurrentPos) * 20f;            
+            Vector3 flowVector = curlNoise(w.CurrentPos) * WormSpeed;            
             Vector3 newPos =  w.CurrentPos + flowVector * Time.deltaTime;
             Vector3 lastPos = w.TubeRenderer.vertices[w.TubeRenderer.vertices.Length -1].point;
             if(Vector3.Distance(newPos, lastPos) > minWormVertexDistance)
@@ -54,12 +59,27 @@ public class FlowfieldWorms : MonoBehaviour
             w.CurrentPos = newPos;
         }
     }
+
     Vector3 snoiseVec3(Vector3 v)
     {
-
-        float s = fastNoise.GetSimplex(v.x, v.y, v.z);
-        float s1 = fastNoise.GetSimplex(v.y - 19.1f, v.z + 33.4f, v.x + 47.2f);
-        float s2 = fastNoise.GetSimplex(v.z + 74.2f, v.x - 124.5f, v.y + 99.4f);
+        float s = octaveSimplex(
+            new Vector3(v.x, v.y, v.z),
+            octaves,
+            persistence,
+            frequency,
+            amplitude);
+        float s1 = octaveSimplex(
+            new Vector3(v.y - 19.1f, v.z + 33.4f, v.x + 47.2f), 
+            octaves,
+            persistence,
+            frequency,
+            amplitude);
+        float s2 = octaveSimplex(
+            new Vector3(v.z + 74.2f, v.x - 124.5f, v.y + 99.4f),
+            octaves,
+            persistence,
+            frequency,
+            amplitude);
         Vector3 c = new Vector3(s, s1, s2);
         return c;
 
@@ -67,8 +87,7 @@ public class FlowfieldWorms : MonoBehaviour
 
     Vector3 curlNoise(Vector3 p)
     {
-
-        float e = .1f;
+        float e = 0.01f;
         Vector3 dx = new Vector3(e, 0f, 0f);
         Vector3 dy = new Vector3(0f, e, 0f);
         Vector3 dz = new Vector3(0f, 0f, e);
@@ -86,6 +105,17 @@ public class FlowfieldWorms : MonoBehaviour
 
         float divisor = 1.0f / (2.0f * e);
         return Vector3.Normalize(new Vector3(x, y, z) * divisor);
-
+    }
+    
+    float octaveSimplex(Vector3 vector, int octaves, float persistence, float frequency, float amplitude){
+        float total = 0f;
+        float maxValue = 0;  // Used for normalizing result to 0.0 - 1.0
+        for(int i = 0; i < octaves; i++) {
+            total += fastNoise.GetSimplex(vector.x * frequency, vector.y * frequency, vector.z * frequency) * amplitude;
+            maxValue += amplitude;
+            amplitude *= persistence;
+            frequency *= 2;
+        }
+        return total/maxValue;
     }
 }

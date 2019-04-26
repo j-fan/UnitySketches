@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 170076734}
-  m_IndirectSpecularColor: {r: 1.0121549, g: 0.99528784, b: 0.96854836, a: 1}
+  m_IndirectSpecularColor: {r: 1.0044837, g: 0.98824006, b: 0.96321493, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -695,7 +695,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1790302267}
-  - component: {fileID: 1790302266}
   - component: {fileID: 1790302268}
   m_Layer: 0
   m_Name: Flowfield
@@ -704,24 +703,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1790302266
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1790302265}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5994332d52ef22e429d37ac07a40fdbc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gridSize: {x: 20, y: 20, z: 20}
-  noiseStrength: 10
-  offset: {x: 0, y: 0, z: 0}
-  offsetSpeed: {x: 20, y: 20, z: 20}
-  cellSize: 3
-  drawPreview: 0
 --- !u!4 &1790302267
 Transform:
   m_ObjectHideFlags: 0
@@ -749,9 +730,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TubeRenderer: {fileID: 666586527}
-  Flowfield: {fileID: 1790302266}
   NumWorms: 100
-  WormSpeed: 3
+  maxWormVertexes: 80
+  WormSpeed: 5
+  frequency: 10
+  amplitude: 1
+  octaves: 1
+  persistence: 1
 --- !u!1 &2063191571
 GameObject:
   m_ObjectHideFlags: 0
