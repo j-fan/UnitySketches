@@ -743,9 +743,9 @@ MonoBehaviour:
   maxWormVertexes: 80
   minWormVertexDistance: 0.05
   WormSpeed: 5
-  frequency: 10
+  frequency: 7
   amplitude: 1
-  octaves: 1
+  octaves: 2
   persistence: 1
 --- !u!1 &2063191571
 GameObject:
