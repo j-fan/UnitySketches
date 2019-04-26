@@ -14,11 +14,13 @@ public class FlowfieldWorms : MonoBehaviour
     public float frequency = 10f;                    // how quickly simplex values change (higher number = smaller curls)
     public float amplitude = 1f;                     // how big the range of simplex values are (effect unknown)
     public int octaves = 1;                          // how many iterations of simplex to use (higher number = more curls)
-    public float persistence = 0.1f;                 // how much effect each subsequent iteration has (higher number = enhances effect of octave count)
+    public float persistence = 1f;                   // how much effect each subsequent iteration has (higher number = enhances effect of octave count)
 
     private List<Worm> worms = new List<Worm>();
     private FastNoise fastNoise;
-    private float offset = 0.01f;
+    private float maxDist = 5f;
+    private float attractionSpeed = 3.0f;
+    float offset = 0f;                               // makes the curl noise field non static
 
     private class Worm {
         public BoundedQueue<Vector3> PointsQueue { get; set; }
@@ -33,9 +35,9 @@ public class FlowfieldWorms : MonoBehaviour
         {
             Worm worm = new Worm();
             worm.CurrentPos = new Vector3(
-                Random.Range(0f, 10f),
-                Random.Range(0f, 10f),
-                Random.Range(0f, 10f)
+                Random.Range(-5f, 5f),
+                Random.Range(-5f, 5f),
+                Random.Range(-5f, 5f)
             );
             worm.PointsQueue = new BoundedQueue<Vector3>(maxWormVertexes);
             worm.TubeRenderer = Instantiate(TubeRenderer,Vector3.zero,Quaternion.identity);
@@ -48,15 +50,27 @@ public class FlowfieldWorms : MonoBehaviour
         for(int i = 0; i < NumWorms; i++)
         {
             Worm w = worms[i];
-            Vector3 flowVector = curlNoise(w.CurrentPos) * WormSpeed;            
+            Vector3 flowVector = curlNoise(w.CurrentPos) * WormSpeed;
+            Vector3 lastPos = w.CurrentPos;            
             Vector3 newPos =  w.CurrentPos + flowVector * Time.deltaTime;
-            Vector3 lastPos = w.TubeRenderer.vertices[w.TubeRenderer.vertices.Length -1].point;
             if(Vector3.Distance(newPos, lastPos) > minWormVertexDistance)
             {
                 w.PointsQueue.Enqueue(newPos);
                 w.TubeRenderer.SetPoints(w.PointsQueue.ToArray(),Color.white);
             }
+            float dist = Vector3.Distance(newPos, Vector3.zero);
+            float step =  attractionSpeed * Time.deltaTime;
+            if(dist > maxDist)
+            {
+                newPos = Vector3.MoveTowards(newPos, Vector3.zero, step);
+                // newPos = new Vector3(
+                //     Mathf.Clamp(newPos.x,0,maxDist),
+                //     Mathf.Clamp(newPos.y,0,maxDist),
+                //     Mathf.Clamp(newPos.z,0,maxDist)
+                // );
+            }
             w.CurrentPos = newPos;
+            offset += 0.001f;
         }
     }
 
@@ -69,13 +83,13 @@ public class FlowfieldWorms : MonoBehaviour
             frequency,
             amplitude);
         float s1 = octaveSimplex(
-            new Vector3(v.y - 19.1f, v.z + 33.4f, v.x + 47.2f), 
+            new Vector3(v.y - 19.1f+offset, v.z + 33.4f, v.x + 47.2f+offset), 
             octaves,
             persistence,
             frequency,
             amplitude);
         float s2 = octaveSimplex(
-            new Vector3(v.z + 74.2f, v.x - 124.5f, v.y + 99.4f),
+            new Vector3(v.z + 74.2f+offset, v.x - 124.5f+offset, v.y + 99.4f),
             octaves,
             persistence,
             frequency,
