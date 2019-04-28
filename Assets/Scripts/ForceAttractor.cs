@@ -1,0 +1,214 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public enum ForceType {
+    Electric,
+    Gravity,
+    SimpleAttractor,
+    Vortex,
+    Airflow
+}
+
+public class ForceAttractor : MonoBehaviour
+{
+    public GameObject[] Attractors { get; set; }
+    private float g = 1f;
+    private float mass = 2f;
+
+    public ForceAttractor(GameObject[] attractors)
+    {
+        if(attractors == null){
+            GenerateAttractors(4, null);
+        } else {
+            Attractors = attractors;
+        }
+    }
+
+    public Vector3 Apply(ForceType type, Vector3 position, Vector3 velocity)
+    {
+            Vector3 force;
+            switch(type)
+            {
+                case ForceType.SimpleAttractor:
+                    force = applySimple(position);
+                    break;
+                case ForceType.Gravity:
+                    force = applyGravity(position);
+                    break;
+                case ForceType.Electric:
+                    force = applyElectric(position);
+                    break;
+                case ForceType.Vortex:
+                    force = applyVortex(position);
+                    break;
+                case ForceType.Airflow:
+                    force = applyAirFlow(position);
+                    break;
+                default:
+                    force = applySimple(position);
+                    break;
+            }
+
+            if (type == ForceType.Gravity)
+            {
+                velocity += force;   //visualise  acceleration
+            }
+            else
+            {
+                velocity = force;    //visualise velocity
+            }
+        return velocity;
+    }
+
+    public void GenerateAttractors (int numAttractors, GameObject attractorObj)
+    {
+        Attractors = new GameObject[numAttractors];
+        for (int i = 0; i < numAttractors; i++)
+        {
+            GameObject newAttractor;
+            if (attractorObj == null)
+            {
+                newAttractor = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                newAttractor.GetComponent<Renderer>().material.color = Color.white;
+            }
+            else
+            {
+                newAttractor = Instantiate(attractorObj);
+            }
+            newAttractor.transform.position = new Vector3(
+                Random.Range(-4f, 4f),
+                Random.Range(-4f, 4f),
+                Random.Range(-4f, 4f));
+            Attractors[i] = newAttractor;
+        }
+    }
+
+    // potential flow  https://github.com/arkaragian/Fluid-Field/blob/master/field.js
+    private Vector3 applyAirFlow(Vector3 position)
+    {
+        Vector3 direction =  (Vector3.back * 10);
+        float distance = float.MaxValue; // used to find closest attractor
+        float maxDistance = 20f;
+        float fieldStrength = 10f;
+
+        foreach(GameObject a in Attractors)
+        {
+            distance = Vector3.Distance(position, a.transform.position);
+            if (distance < maxDistance)
+            {
+                float dx = position.x - a.transform.position.x;
+                float dz = position.z - a.transform.position.z;
+                
+                float angle = Mathf.Atan2(dz, dx);
+                float ux = (fieldStrength / distance) * Mathf.Cos(angle);
+                float uz = (fieldStrength / distance) * Mathf.Sin(angle);
+
+                float falloff = ((maxDistance - distance) / distance);
+                direction = direction + new Vector3(ux, 0, uz) * falloff ;
+            }
+
+        }
+        Vector3 totalForce = direction * Time.deltaTime;
+        return totalForce;
+    }
+    private Vector3 applySimple(Vector3 position)
+    {
+        Vector3 direction = Vector3.zero;
+        float distance = float.MaxValue; // used to find closest attractor
+
+        foreach(GameObject a in Attractors)
+        {
+            if (Vector3.Distance(position, a.transform.position) < distance)
+            {
+                distance = Vector3.Distance(position, a.transform.position);
+                direction = (a.transform.position - position).normalized;
+            }
+
+        }
+        Vector3 totalForce = direction * Time.deltaTime;
+        return totalForce;
+    }
+    /*
+     * algo from: https://gamedevelopment.tutsplus.com/tutorials/adding-turbulence-to-a-particle-system--gamedev-13332
+     */
+    private Vector3 applyVortex(Vector3 pos)
+    {
+        float distanceX = float.MaxValue;
+        float distanceY = float.MaxValue;
+        float distanceZ = float.MaxValue;
+        float distance = float.MaxValue;
+    
+        Vector3 direction = Vector3.zero;
+        foreach(GameObject a in Attractors)
+        {
+            if(Vector3.Distance(pos,a.transform.position) < distance)
+            {
+                distanceX = (pos.x - a.transform.position.x);
+                distanceY = (pos.y - a.transform.position.y);
+                distanceZ = (pos.z - a.transform.position.z);
+                distance = Vector3.Distance(pos, a.transform.position);
+            }
+
+            direction += (a.transform.position - pos).normalized;
+        }
+
+        float vortexScale = 10.0f;
+        float vortexSpeed = 10.0f;
+        float factor = 1 / (1 + (distanceX * distanceX + distanceZ * distanceZ)/ vortexScale);
+
+        float vx = distanceX  * vortexSpeed * factor;
+        //float vy = distanceY * vortexSpeed * factor;
+        float vz = distanceZ * vortexSpeed * factor;
+
+        Vector3 totalForce = Quaternion.AngleAxis(90, Vector3.up) * new Vector3(vx, 0, vz) + (direction);
+        return totalForce;
+    }
+    private Vector3 applyGravity(Vector3 pos)
+    {
+        Vector3 direction = Vector3.zero;
+        Vector3 totalForce = Vector3.zero;
+        foreach(GameObject a in Attractors)
+        {
+            direction = (a.transform.position - pos).normalized;
+            float magnitude = direction.magnitude;
+            Mathf.Clamp(magnitude, 5.0f, 10.0f); //eliminate extreme result for very close or very far objects
+
+            float gforce = (g * mass * mass) / direction.magnitude * direction.magnitude;
+            totalForce += ((direction) * gforce) * Time.deltaTime;
+        }
+
+        totalForce = totalForce;
+        return totalForce;
+    }
+
+    private Vector3 applyElectric(Vector3 pos)
+    {
+        Vector3 totalForce = Vector3.zero;
+        Vector3 force = Vector3.zero;
+        int i = 0;
+        foreach(GameObject a in Attractors)
+        {
+            float dist = Vector3.Distance(pos, a.transform.position) * 100000;
+            float fieldMag = 99999 / dist * dist;
+            Mathf.Clamp(fieldMag, 0.0f, 5.0f);
+
+            //alternate postive and negative charges
+            if (i % 2 == 0)
+            {
+                force.x -= fieldMag * (pos.x - a.transform.position.x) / dist;
+                force.y -= fieldMag * (pos.y - a.transform.position.y) / dist;
+                force.z -= fieldMag * (pos.z - a.transform.position.z) / dist;
+            }
+            else
+            {
+                force.x += fieldMag * (pos.x - a.transform.position.x) / dist;
+                force.y += fieldMag * (pos.y - a.transform.position.y) / dist;
+                force.z += fieldMag * (pos.z - a.transform.position.z) / dist;
+            }
+            i++;
+        }
+        totalForce = force;
+        return totalForce;
+    }
+}

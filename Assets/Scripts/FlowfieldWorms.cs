@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class FlowfieldWorms : MonoBehaviour
@@ -20,7 +21,7 @@ public class FlowfieldWorms : MonoBehaviour
     private FastNoise fastNoise;
     private float maxDist = 5f;
     private float attractionSpeed = 3.0f;
-    float offset = 0f;                               // makes the curl noise field non static
+    private float offset = 0f;                               // makes the curl noise field non static
 
     private class Worm {
         public BoundedQueue<Vector3> PointsQueue { get; set; }
@@ -50,26 +51,33 @@ public class FlowfieldWorms : MonoBehaviour
         for(int i = 0; i < NumWorms; i++)
         {
             Worm w = worms[i];
-            Vector3 flowVector = curlNoise(w.CurrentPos) * WormSpeed;
-            Vector3 lastPos = w.CurrentPos;            
-            Vector3 newPos =  w.CurrentPos + flowVector * Time.deltaTime;
-            if(Vector3.Distance(newPos, lastPos) > minWormVertexDistance)
-            {
-                w.PointsQueue.Enqueue(newPos);
-                w.TubeRenderer.SetPoints(w.PointsQueue.ToArray(),Color.white);
-            }
-            float dist = Vector3.Distance(newPos, Vector3.zero);
-            float step =  attractionSpeed * Time.deltaTime;
-     
-            float distanceRatio = Mathf.Clamp(dist, 0, maxDist) / maxDist;
-            newPos =  distanceRatio * Vector3.MoveTowards(newPos, Vector3.zero, step) +
-                (1 - distanceRatio) * newPos;
-            
-            w.CurrentPos = newPos;
-            offset += 0.001f;
+            float deltaTime = Time.deltaTime;
+            // ThreadPool.QueueUserWorkItem(new WaitCallback((state) => updateWorm(state, w, deltaTime)));
+            updateWorm(null, w, deltaTime);
         }
     }
 
+    void updateWorm(object state, Worm w, float deltaTime)
+    {
+        Vector3 flowVector = curlNoise(w.CurrentPos) * WormSpeed;
+        Vector3 lastPos = w.CurrentPos;            
+        Vector3 newPos =  w.CurrentPos + flowVector * deltaTime;
+        float dist = Vector3.Distance(newPos, Vector3.zero);
+        float step =  attractionSpeed * deltaTime;
+    
+        float distanceRatio = Mathf.Clamp(dist, 0, maxDist) / maxDist;
+        newPos =  distanceRatio * Vector3.MoveTowards(newPos, Vector3.zero, step) +
+            (1 - distanceRatio) * newPos;
+        
+        w.CurrentPos = newPos;
+        offset += 0.001f;
+
+        if(Vector3.Distance(newPos, lastPos) > minWormVertexDistance)
+        {
+            w.PointsQueue.Enqueue(newPos);
+            w.TubeRenderer.SetPoints(w.PointsQueue.ToArray(),Color.white);
+        }
+    }
     Vector3 snoiseVec3(Vector3 v)
     {
         float s = octaveSimplex(
