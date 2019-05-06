@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 170076734}
-  m_IndirectSpecularColor: {r: 1.0044837, g: 0.98824006, b: 0.96321493, a: 1}
+  m_IndirectSpecularColor: {r: 1.0121549, g: 0.99528784, b: 0.96854836, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -706,7 +706,7 @@ GameObject:
   - component: {fileID: 1790302267}
   - component: {fileID: 1790302268}
   m_Layer: 0
-  m_Name: Flowfield
+  m_Name: Worms Flowfield
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -741,12 +741,13 @@ MonoBehaviour:
   TubeRenderer: {fileID: 666586527}
   NumWorms: 100
   maxWormVertexes: 80
-  minWormVertexDistance: 0.05
+  minWormVertexDistance: 0.1
   WormSpeed: 5
   frequency: 7
   amplitude: 1
   octaves: 2
   persistence: 1
+  isCurlBehaviour: 0
 --- !u!1 &2063191571
 GameObject:
   m_ObjectHideFlags: 0

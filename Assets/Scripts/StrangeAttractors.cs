@@ -16,6 +16,7 @@ public class StrangeAttractors : MonoBehaviour
     public ForceType forceType;
     public BeatsFFT beatsFFT;
     public OSC osc;
+    public bool IsStrangeAttractorMode = true;
 
     private ParticleSystem particleSys;
     private ParticleSystem.MainModule particleSysMain;
@@ -27,7 +28,7 @@ public class StrangeAttractors : MonoBehaviour
     
     private void Start()
     {
-        //osc.SetAddressHandler("/midi/mixtrack_pro_3/0/3/control_change", OnRightFilter);
+        osc.SetAddressHandler("/midi/mixtrack_pro_3/0/3/control_change", OnRightFilter);
         forceAttractor = new ForceAttractor(null);
         strangeAttractor = new StrangeAttractor();
         particleSys = GetComponent<ParticleSystem>();
@@ -67,21 +68,23 @@ public class StrangeAttractors : MonoBehaviour
         particleSys.GetParticles(particles);
         
         for (int i = 0; i < particles.Length; i++){
-            // particles[i].velocity = forceAttractor.Apply(forceType, particles[i].position, particles[i].velocity);
-            particles[i].velocity = strangeAttractor.Apply(attractorType, particles[i].position);
+            if(IsStrangeAttractorMode)
+            {
+                particles[i].velocity = strangeAttractor.Apply(attractorType, particles[i].position);
+            } else {
+                particles[i].velocity = forceAttractor.Apply(forceType, particles[i].position, particles[i].velocity);
+            }
             particles[i].velocity = Vector3.ClampMagnitude(Vector3.Normalize(particles[i].velocity) * 1000 * beatsFFT.avgFreq,10);
             particles[i].velocity = particles[i].velocity * speedModifier * 4f;
-            // particles[i].velocity = Vector3.Normalize(particles[i].velocity);
 
             // prevent particles going to infinity
             if(particles[i].position.magnitude > 800){
                 particles[i].startColor = new Color(0, 0, 0, 0);
             }
         }
-        // save modified particles
         particleSys.SetParticles(particles,particles.Length);
-        //transform.Rotate(30 * beatsFFT.avgFreq, 40 * beatsFFT.avgFreq, 30 * beatsFFT.avgFreq, Space.World);
-        transform.Rotate(speedModifier,0,speedModifier);
+        transform.Rotate(30 * beatsFFT.avgFreq, 40 * beatsFFT.avgFreq, 30 * beatsFFT.avgFreq, Space.World);
+        // transform.Rotate(speedModifier,0,speedModifier);
         particleTrailModule.colorOverTrail = new Color(1f, 1f, 1f, (beatsFFT.runningAvgFreq * 10) + 0.01f);
     }
 

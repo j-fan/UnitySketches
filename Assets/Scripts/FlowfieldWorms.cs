@@ -17,29 +17,45 @@ public class FlowfieldWorms : MonoBehaviour
     public int octaves = 1;                          // how many iterations of simplex to use (higher number = more curls)
     public float persistence = 1f;                   // how much effect each subsequent iteration has (higher number = enhances effect of octave count)
 
+    public bool isCurlBehaviour = true;
     private List<Worm> worms = new List<Worm>();
     private FastNoise fastNoise;
     private float maxDist = 5f;
     private float attractionSpeed = 3.0f;
     private float offset = 0f;                               // makes the curl noise field non static
+    private ForceAttractor forceAttractor;
 
     private class Worm {
         public BoundedQueue<Vector3> PointsQueue { get; set; }
         public TubeRenderer TubeRenderer { get; set; }
-        public Vector3 CurrentPos { get; set; }
+        public Vector3 position { get; set; }
+        public Vector3 velocity { get; set; }
+        public Vector3 acceleration { get; set; }
+        public void update(){
+            velocity += acceleration;
+            velocity = Vector3.ClampMagnitude(velocity,10f);
+            position += velocity;
+        }
     }
     
     void Start()
     {
         fastNoise = new FastNoise();
+        var centre = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        centre.transform.position = Vector3.zero;
+        forceAttractor = new ForceAttractor(new GameObject[]{
+            centre
+        });
+        // forceAttractor = new ForceAttractor(null);
         for(int i = 0; i < NumWorms; i++)
         {
             Worm worm = new Worm();
-            worm.CurrentPos = new Vector3(
+            worm.position = new Vector3(
                 Random.Range(-5f, 5f),
                 Random.Range(-5f, 5f),
                 Random.Range(-5f, 5f)
             );
+            worm.velocity = randomVector();
             worm.PointsQueue = new BoundedQueue<Vector3>(maxWormVertexes);
             worm.TubeRenderer = Instantiate(TubeRenderer,Vector3.zero,Quaternion.identity);
             worms.Add(worm);
@@ -57,27 +73,47 @@ public class FlowfieldWorms : MonoBehaviour
         }
     }
 
+    Vector3 randomVector(){
+        return new Vector3(
+                Random.Range(-0.1f,0.1f),
+                Random.Range(-0.1f,0.1f),
+                Random.Range(-0.1f,0.1f));
+    }
+
     void updateWorm(object state, Worm w, float deltaTime)
     {
-        Vector3 flowVector = curlNoise(w.CurrentPos) * WormSpeed;
-        Vector3 lastPos = w.CurrentPos;            
-        Vector3 newPos =  w.CurrentPos + flowVector * deltaTime;
-        float dist = Vector3.Distance(newPos, Vector3.zero);
-        float step =  attractionSpeed * deltaTime;
-    
-        float distanceRatio = Mathf.Clamp(dist, 0, maxDist) / maxDist;
-        newPos =  distanceRatio * Vector3.MoveTowards(newPos, Vector3.zero, step) +
-            (1 - distanceRatio) * newPos;
-        
-        w.CurrentPos = newPos;
-        offset += 0.001f;
-
-        if(Vector3.Distance(newPos, lastPos) > minWormVertexDistance)
+        Vector3 flowVector;
+        Vector3 lastPos = w.position;
+        if(isCurlBehaviour)
         {
-            w.PointsQueue.Enqueue(newPos);
+            flowVector = curlNoise(w.position) * WormSpeed;
+            Vector3 newPos =  w.position + flowVector * deltaTime;
+            float dist = Vector3.Distance(newPos, Vector3.zero);
+            float step =  attractionSpeed * deltaTime;
+        
+            float distanceRatio = Mathf.Clamp(dist, 0, maxDist) / maxDist;
+            newPos =  distanceRatio * Vector3.MoveTowards(newPos, Vector3.zero, step) +
+                (1 - distanceRatio) * newPos;
+            
+            w.position = newPos;
+            w.velocity = Vector3.zero;
+            offset += 0.001f;
+        } else {
+            flowVector = forceAttractor.ApplyVortexSpecial(VortexType.Forward,w.position);
+            w.velocity = flowVector * 0.05f;
+            // flowVector = forceAttractor.Apply(ForceType.Gravity, w.position, w.velocity+randomVector()*0.01f);
+            // w.velocity = flowVector;
+            
+        }
+        w.update();
+
+        if(Vector3.Distance(w.position, lastPos) > minWormVertexDistance)
+        {
+            w.PointsQueue.Enqueue(w.position);
             w.TubeRenderer.SetPoints(w.PointsQueue.ToArray(),Color.white);
         }
     }
+
     Vector3 snoiseVec3(Vector3 v)
     {
         float s = octaveSimplex(
