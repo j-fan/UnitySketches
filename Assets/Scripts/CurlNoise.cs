@@ -17,7 +17,7 @@ public class CurlNoise
         fastNoise = new FastNoise();
     }
 
-    Vector3 snoiseVec3(Vector3 v)
+    private Vector3 snoiseVec3(Vector3 v)
     {
         float s = octaveSimplex(
             new Vector3(v.x, v.y, v.z),
@@ -67,7 +67,7 @@ public class CurlNoise
         return Vector3.Normalize(new Vector3(x, y, z) * divisor);
     }
 
-    float octaveSimplex(Vector3 vector, int octaves, float persistence, float frequency, float amplitude)
+    private float octaveSimplex(Vector3 vector, int octaves, float persistence, float frequency, float amplitude)
     {
         float total = 0f;
         float maxValue = 0;  // Used for normalizing result to 0.0 - 1.0

@@ -11,7 +11,6 @@ public class StrangeAttractors : MonoBehaviour
     // https://www.dynamicmath.xyz/strange-attractors/
     // https://www.flickr.com/photos/39445835@N05/sets/72157691795186384
 
- 
     public AttractorType attractorType;
     public ForceType forceType;
     public BeatsFFT beatsFFT;
@@ -51,13 +50,6 @@ public class StrangeAttractors : MonoBehaviour
         }
     }
 
-    private void OnRightFilter(OscMessage message)
-    {
-        int id = Int32.Parse(message.values[0].ToString(), System.Globalization.NumberStyles.HexNumber);
-        int value = Int32.Parse(message.values[1].ToString(), System.Globalization.NumberStyles.HexNumber);
-        speedModifier = (float)value / 128f;
-        // print(message.values[1]);
-    }
     private void LateUpdate()
     {
         int maxParticles = particleSysMain.maxParticles;
@@ -88,4 +80,11 @@ public class StrangeAttractors : MonoBehaviour
         particleTrailModule.colorOverTrail = new Color(1f, 1f, 1f, (beatsFFT.runningAvgFreq * 10) + 0.01f);
     }
 
+    private void OnRightFilter(OscMessage message)
+    {
+        int id = Int32.Parse(message.values[0].ToString(), System.Globalization.NumberStyles.HexNumber);
+        int value = Int32.Parse(message.values[1].ToString(), System.Globalization.NumberStyles.HexNumber);
+        speedModifier = (float)value / 128f;
+        // print(message.values[1]);
+    }
 }

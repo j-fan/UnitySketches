@@ -12,7 +12,7 @@ public class FlowfieldWorms : MonoBehaviour
     public float CurlSpeed = 5f;
 
     // the best noise params to play with are octaves and frequency
-    CurlNoise curlNoise;
+    private CurlNoise curlNoise = new CurlNoise();
     public float Frequency = 7f;                    // how quickly simplex values change (higher number = smaller curls)
     public float Amplitude = 1f;                     // how big the range of simplex values are (effect unknown)
     public int Octaves = 1;                          // how many iterations of simplex to use (higher number = more curls)
@@ -21,7 +21,7 @@ public class FlowfieldWorms : MonoBehaviour
     public GameObject CentreObj;
     public FlowfieldWormBehaviour flowfieldWormBehaviour;
     private List<Worm> worms = new List<Worm>();
-    private FastNoise fastNoise;
+    private FastNoise fastNoise = new FastNoise();
     private float maxDist = 5f;
     private float attractionSpeed = 3.0f;
     // makes the curl noise field non static
@@ -53,11 +53,11 @@ public class FlowfieldWorms : MonoBehaviour
 
     void Start()
     {
-        fastNoise = new FastNoise();
-        curlNoise = new CurlNoise();
         if (!CentreObj)
         {
             GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        } else {
+            CentreObj = GameObject.Instantiate(CentreObj);
         }
         CentreObj.transform.position = Vector3.zero;
         forceAttractor = new ForceAttractor(new GameObject[]{
