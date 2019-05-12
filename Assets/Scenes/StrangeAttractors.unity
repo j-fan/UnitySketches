@@ -5329,7 +5329,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attractorType: 7
-  forceType: 1
+  forceType: 4
   beatsFFT: {fileID: 2008681526}
   osc: {fileID: 8376912}
   IsStrangeAttractorMode: 1

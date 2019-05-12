@@ -18,7 +18,7 @@ public enum VortexType {
     ForwardRepulsion
 }
 
-public class ForceAttractor : MonoBehaviour
+public class ForceAttractor
 {
     public GameObject[] Attractors { get; set; }
 
@@ -89,7 +89,7 @@ public class ForceAttractor : MonoBehaviour
             }
             else
             {
-                newAttractor = Instantiate(attractorObj);
+                newAttractor = GameObject.Instantiate(attractorObj);
             }
             newAttractor.transform.position = new Vector3(
                 Random.Range(-4f, 4f),
@@ -145,6 +145,7 @@ public class ForceAttractor : MonoBehaviour
         return totalForce;
     }
 
+    // currently unimplemented
     private Vector3 applySimpleRepeller(Vector3 position)
     {
         Vector3 direction = Vector3.zero;
@@ -219,7 +220,7 @@ public class ForceAttractor : MonoBehaviour
         float distanceY = distances.y;
         float distanceZ = distances.z;
 
-        float factor = 1 / (1 + (distanceX * distanceX + distanceY * distanceY)/ vortexScale);
+        float factor = 1 / (1 + (distanceX * distanceX + distanceY * distanceY) / vortexScale);
 
         float vx = distanceX  * vortexSpeed * factor;
         float vy = distanceY * vortexSpeed * factor;
@@ -234,7 +235,7 @@ public class ForceAttractor : MonoBehaviour
         float distanceY = distances.y;
         float distanceZ = distances.z;
         
-        float factor = 1 / (1 + (distanceX * distanceX + distanceZ * distanceZ)/ vortexScale);
+        float factor = 1 / (1 + (distanceX * distanceX + distanceZ * distanceZ) / vortexScale);
 
         float vx = distanceX  * vortexSpeed * factor;
         float vy = distanceY * vortexSpeed * factor;
@@ -248,7 +249,7 @@ public class ForceAttractor : MonoBehaviour
         float distanceY = distances.y;
         float distanceZ = distances.z;
         
-        float factor = 1 / (1 + (distanceX * distanceX + distanceY * distanceY)/ vortexScale);
+        float factor = 1 / (1 + (distanceX * distanceX + distanceY * distanceY) / vortexScale);
 
         float vx = distanceX  * vortexSpeed * factor;
         float vy = distanceY * vortexSpeed * factor;
@@ -262,11 +263,12 @@ public class ForceAttractor : MonoBehaviour
         float distanceY = distances.y;
         float distanceZ = distances.z;
         
-        float factor = 1 / (1 + (distanceX * distanceX + distanceZ * distanceZ)/ vortexScale);
+        //float factor = 1 / (1 + (distanceX * distanceX + distanceZ * distanceZ)/ vortexScale);
+        float factor = 1 / (1 + (distanceX * distanceX + distanceY * distanceY) / vortexScale);
 
         float vx = distanceX  * vortexSpeed * factor;
         float vy = distanceY * vortexSpeed * factor;
-        float vz = Mathf.Clamp(distanceZ * vortexSpeed * factor, -10f, 10f);
+        float vz = Mathf.Clamp(distanceZ * vortexSpeed * factor, -5f, 5f);
 
         Vector3 totalForce = Quaternion.AngleAxis(90, Vector3.forward) * new Vector3(vx, vy, vz) + (direction);
         return totalForce;

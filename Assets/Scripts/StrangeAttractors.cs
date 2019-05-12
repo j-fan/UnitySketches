@@ -74,7 +74,7 @@ public class StrangeAttractors : MonoBehaviour
             } else {
                 particles[i].velocity = forceAttractor.Apply(forceType, particles[i].position, particles[i].velocity);
             }
-            particles[i].velocity = Vector3.ClampMagnitude(Vector3.Normalize(particles[i].velocity) * 1000 * beatsFFT.avgFreq,10);
+            particles[i].velocity = Vector3.ClampMagnitude(Vector3.Normalize(particles[i].velocity) * 1000 * beatsFFT.avgFreq, 10);
             particles[i].velocity = particles[i].velocity * speedModifier * 4f;
 
             // prevent particles going to infinity
