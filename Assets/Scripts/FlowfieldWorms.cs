@@ -132,7 +132,7 @@ public class FlowfieldWorms : MonoBehaviour
                     w.velocity = randomVector();
                 }
                 flowVector = forceAttractor.Apply(ForceType.Gravity, w.position, w.velocity);
-                flowVector = Vector3.ClampMagnitude(flowVector, 2f);
+                flowVector = Vector3.ClampMagnitude(flowVector, 1.0f);
                 w.velocity = flowVector;
                 break;
 
