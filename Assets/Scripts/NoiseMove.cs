@@ -24,13 +24,9 @@ public class NoiseMove : MonoBehaviour
             nextY(t, centre.y, motionRadius),
             centre.z);   
     }
-    private float nextXSimplex(float t, float x, float motion_radius, float seed){
+    private float nextSimplex(float t, float x, float motion_radius, float seed){
         return x + fastNoise.GetSimplex(seed + motion_radius*Mathf.Cos(Mathf.PI*t),
                                         motion_radius*Mathf.Sin(Mathf.PI*t));
-    }
-    private float nextYSimplex(float t,float y, float motion_radius, float seed){
-        return y  + fastNoise.GetSimplex(seed + motion_radius*Mathf.Cos(Mathf.PI*t),
-                                         motion_radius*Mathf.Sin(Mathf.PI*t));
     }
     private float nextX(float t, float x, float radius){
     return x + Mathf.Cos(Mathf.PI * 2 *t) * radius;

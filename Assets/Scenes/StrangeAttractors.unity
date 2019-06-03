@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 170076734}
-  m_IndirectSpecularColor: {r: 0.024432404, g: 0.02658569, b: 0.030432032, a: 1}
+  m_IndirectSpecularColor: {r: 0.024432419, g: 0.026585715, b: 0.030432062, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1916,7 +1916,7 @@ ParticleSystem:
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 0}
-        key1: {r: 1, g: 1, b: 1, a: 0.6862745}
+        key1: {r: 1, g: 1, b: 1, a: 0.78431374}
         key2: {r: 1, g: 0.72474647, b: 0.13235295, a: 1}
         key3: {r: 0.32352942, g: 0.7760648, b: 1, a: 0}
         key4: {r: 0, g: 0.25517225, b: 1, a: 0}
@@ -5332,7 +5332,6 @@ MonoBehaviour:
   forceType: 4
   beatsFFT: {fileID: 2008681526}
   osc: {fileID: 8376912}
-  IsStrangeAttractorMode: 1
 --- !u!95 &2062291350
 Animator:
   serializedVersion: 3

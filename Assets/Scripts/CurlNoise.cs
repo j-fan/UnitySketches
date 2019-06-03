@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CurlNoise
 {
-    private FastNoise fastNoise;
+    private FastNoise fastNoise = new FastNoise();
     private float offset = 0f;
 
     public float Frequency { get; set; } = 7f;
@@ -12,9 +12,16 @@ public class CurlNoise
     public int Octaves { get; set; } = 1;
     public float Persistence { get; set; } = 1f;
 
-    public CurlNoise()
-    {
-        fastNoise = new FastNoise();
+    public void SetProperties(
+        float frequency,
+        float amplitude,
+        int octaves,
+        float persistence){
+        
+        Frequency = frequency;
+        Amplitude = amplitude;
+        Octaves = octaves;
+        Persistence = persistence;
     }
 
     private Vector3 snoiseVec3(Vector3 v)

@@ -11,22 +11,18 @@ public class FlowfieldWorms : MonoBehaviour
     public float MinWormVertexDistance = 0.1f;      // lower numbers = smoother but shorter worms
     public float CurlSpeed = 5f;
 
-    // the best noise params to play with are octaves and frequency
     private CurlNoise curlNoise = new CurlNoise();
     public float Frequency = 7f;                    // how quickly simplex values change (higher number = smaller curls)
-    public float Amplitude = 1f;                     // how big the range of simplex values are (effect unknown)
-    public int Octaves = 1;                          // how many iterations of simplex to use (higher number = more curls)
-    public float Persistence = 1f;                   // how much effect each subsequent iteration has (higher number = enhances effect of octave count)
+    public float Amplitude = 1f;                    // how big the range of simplex values are (effect unknown)
+    public int Octaves = 1;                         // how many iterations of simplex to use (higher number = more curls)
+    public float Persistence = 1f;                  // how much effect each subsequent iteration has (higher number = enhances effect of octave count)
 
     public GameObject CentreObj;
     public FlowfieldWormBehaviour flowfieldWormBehaviour;
     private List<Worm> worms = new List<Worm>();
-    private FastNoise fastNoise = new FastNoise();
     private float maxDist = 5f;
     private float attractionSpeed = 3.0f;
-    // makes the curl noise field non static
     private ForceAttractor forceAttractor;
-
 
     public enum FlowfieldWormBehaviour
     {
@@ -53,6 +49,7 @@ public class FlowfieldWorms : MonoBehaviour
 
     void Start()
     {
+        curlNoise.SetProperties(Frequency, Amplitude, Octaves, Persistence);
         if (!CentreObj)
         {
             GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -84,8 +81,7 @@ public class FlowfieldWorms : MonoBehaviour
         {
             Worm w = worms[i];
             float deltaTime = Time.deltaTime;
-            // ThreadPool.QueueUserWorkItem(new WaitCallback((state) => updateWorm(state, w, deltaTime)));
-            updateWorm(null, w, deltaTime);
+            updateWorm(w, deltaTime);
         }
     }
 
@@ -97,7 +93,7 @@ public class FlowfieldWorms : MonoBehaviour
                 Random.Range(-0.1f, 0.1f));
     }
 
-    void updateWorm(object state, Worm w, float deltaTime)
+    void updateWorm(Worm w, float deltaTime)
     {
         Vector3 flowVector;
         Vector3 lastPos = w.position;
@@ -106,10 +102,10 @@ public class FlowfieldWorms : MonoBehaviour
         {
             case FlowfieldWormBehaviour.CurlNoise:
                 flowVector = curlNoise.calculate(w.position) * CurlSpeed;
+
                 Vector3 newPos = w.position + flowVector * deltaTime;
                 float dist = Vector3.Distance(newPos, Vector3.zero);
                 float step = attractionSpeed * deltaTime;
-
                 float distanceRatio = Mathf.Clamp(dist, 0, maxDist) / maxDist;
                 newPos = distanceRatio * Vector3.MoveTowards(newPos, Vector3.zero, step) +
                     (1 - distanceRatio) * newPos;
@@ -135,7 +131,6 @@ public class FlowfieldWorms : MonoBehaviour
                 flowVector = Vector3.ClampMagnitude(flowVector, 1.0f);
                 w.velocity = flowVector;
                 break;
-
         }
 
         w.update();
@@ -146,5 +141,4 @@ public class FlowfieldWorms : MonoBehaviour
             w.TubeRenderer.SetPoints(w.PointsQueue.ToArray(), Color.white);
         }
     }
-
 }

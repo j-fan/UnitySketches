@@ -9,13 +9,11 @@ public class BeatsFFT : MonoBehaviour {
     public float runningAvgFreq = 0.0f;
     float alpha = 0.2f; //lowpass filter positions for smooth movement, lower number for more smoothing
 
-    // Use this for initialization
     void Start()
     {
 
     }
 
-    // Update is called once per frame
     void Update()
     {
         GetSpectrumAudioSource();
