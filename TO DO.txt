@@ -1,3 +1,7 @@
+flocking
+- https://natureofcode.com/book/chapter-6-autonomous-agents/
+- https://www.youtube.com/watch?v=mhjuuHl6qHM
+
 wormz
 - https://forum.unity.com/threads/tuberenderer-generate-tubes-in-runtime.134315/
 - https://github.com/keijiro/Swarm
