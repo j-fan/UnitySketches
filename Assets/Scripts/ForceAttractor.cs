@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ForceType {
+public enum ForceType
+{
     Electric,
     Gravity,
     SimpleAttractor,
@@ -11,7 +12,8 @@ public enum ForceType {
     Airflow
 }
 
-public enum VortexType {
+public enum VortexType
+{
     Forward,
     Up,
     UpRepulsion,
@@ -24,9 +26,12 @@ public class ForceAttractor
 
     public ForceAttractor(GameObject[] attractors)
     {
-        if(attractors == null){
+        if (attractors == null)
+        {
             GenerateAttractors(2, null);
-        } else {
+        }
+        else
+        {
             Attractors = attractors;
         }
     }
@@ -34,40 +39,40 @@ public class ForceAttractor
     // velocity does not matter if forcetype != gravity
     public Vector3 Apply(ForceType type, Vector3 position, Vector3 velocity)
     {
-            Vector3 force;
-            switch(type)
-            {
-                case ForceType.SimpleAttractor:
-                    force = applySimpleAttractor(position);
-                    break;
-                case ForceType.SimpleRepeller:
-                    force = applySimpleRepeller(position);
-                    break;
-                case ForceType.Gravity:
-                    force = applyGravity(position);
-                    break;
-                case ForceType.Electric:
-                    force = applyElectric(position);
-                    break;
-                case ForceType.Vortex:
-                    force = applyVortex(position, VortexType.Forward);
-                    break;
-                case ForceType.Airflow:
-                    force = applyAirFlow(position);
-                    break;
-                default:
-                    force = applySimpleAttractor(position);
-                    break;
-            }
+        Vector3 force;
+        switch (type)
+        {
+            case ForceType.SimpleAttractor:
+                force = applySimpleAttractor(position);
+                break;
+            case ForceType.SimpleRepeller:
+                force = applySimpleRepeller(position);
+                break;
+            case ForceType.Gravity:
+                force = applyGravity(position);
+                break;
+            case ForceType.Electric:
+                force = applyElectric(position);
+                break;
+            case ForceType.Vortex:
+                force = applyVortex(position, VortexType.Forward);
+                break;
+            case ForceType.Airflow:
+                force = applyAirFlow(position);
+                break;
+            default:
+                force = applySimpleAttractor(position);
+                break;
+        }
 
-            if (type == ForceType.Gravity)
-            {
-                velocity += force;   //visualise  acceleration
-            }
-            else
-            {
-                velocity = force;    //visualise velocity
-            }
+        if (type == ForceType.Gravity)
+        {
+            velocity += force;   //visualise  acceleration
+        }
+        else
+        {
+            velocity = force;    //visualise velocity
+        }
         return velocity;
     }
 
@@ -76,7 +81,7 @@ public class ForceAttractor
         return applyVortex(position, type);
     }
 
-    public void GenerateAttractors (int numAttractors, GameObject attractorObj)
+    public void GenerateAttractors(int numAttractors, GameObject attractorObj)
     {
         Attractors = new GameObject[numAttractors];
         for (int i = 0; i < numAttractors; i++)
@@ -102,25 +107,25 @@ public class ForceAttractor
     // potential flow  https://github.com/arkaragian/Fluid-Field/blob/master/field.js
     private Vector3 applyAirFlow(Vector3 position)
     {
-        Vector3 direction =  (Vector3.back * 10);
+        Vector3 direction = (Vector3.back * 10);
         float distance = float.MaxValue; // used to find closest attractor
         float maxDistance = 20f;
         float fieldStrength = 10f;
 
-        foreach(GameObject a in Attractors)
+        foreach (GameObject a in Attractors)
         {
             distance = Vector3.Distance(position, a.transform.position);
             if (distance < maxDistance)
             {
                 float dx = position.x - a.transform.position.x;
                 float dz = position.z - a.transform.position.z;
-                
+
                 float angle = Mathf.Atan2(dz, dx);
                 float ux = (fieldStrength / distance) * Mathf.Cos(angle);
                 float uz = (fieldStrength / distance) * Mathf.Sin(angle);
 
                 float falloff = ((maxDistance - distance) / distance);
-                direction = direction + new Vector3(ux, 0, uz) * falloff ;
+                direction = direction + new Vector3(ux, 0, uz) * falloff;
             }
 
         }
@@ -132,7 +137,7 @@ public class ForceAttractor
         Vector3 direction = Vector3.zero;
         float distance = float.MaxValue; // used to find closest attractor
 
-        foreach(GameObject a in Attractors)
+        foreach (GameObject a in Attractors)
         {
             if (Vector3.Distance(position, a.transform.position) < distance)
             {
@@ -151,7 +156,7 @@ public class ForceAttractor
         Vector3 direction = Vector3.zero;
         float distance = float.MaxValue; // used to find closest attractor
 
-        foreach(GameObject a in Attractors)
+        foreach (GameObject a in Attractors)
         {
             if (Vector3.Distance(position, a.transform.position) < distance)
             {
@@ -173,11 +178,11 @@ public class ForceAttractor
         float distanceY = float.MaxValue;
         float distanceZ = float.MaxValue;
         float distance = float.MaxValue;
-    
+
         Vector3 direction = Vector3.zero;
-        foreach(GameObject a in Attractors)
+        foreach (GameObject a in Attractors)
         {
-            if(Vector3.Distance(pos,a.transform.position) < distance)
+            if (Vector3.Distance(pos, a.transform.position) < distance)
             {
                 distanceX = (pos.x - a.transform.position.x);
                 distanceY = (pos.y - a.transform.position.y);
@@ -194,7 +199,7 @@ public class ForceAttractor
         Vector3 distances = new Vector3(distanceX, distanceY, distanceZ);
 
         Vector3 totalForce;
-        switch(type)
+        switch (type)
         {
             case VortexType.Forward:
                 totalForce = vortexForward(vortexSpeed, 20f, distances, direction);
@@ -215,14 +220,15 @@ public class ForceAttractor
         return totalForce;
     }
 
-    private Vector3 vortexForward(float vortexSpeed, float vortexScale, Vector3 distances, Vector3 direction) {
+    private Vector3 vortexForward(float vortexSpeed, float vortexScale, Vector3 distances, Vector3 direction)
+    {
         float distanceX = distances.x;
         float distanceY = distances.y;
         float distanceZ = distances.z;
 
         float factor = 1 / (1 + (distanceX * distanceX + distanceY * distanceY) / vortexScale);
 
-        float vx = distanceX  * vortexSpeed * factor;
+        float vx = distanceX * vortexSpeed * factor;
         float vy = distanceY * vortexSpeed * factor;
         float vz = distanceZ * vortexSpeed * factor;
         Vector3 totalForce = Quaternion.AngleAxis(90, Vector3.forward) * new Vector3(vx, vy, 0) + (direction);
@@ -230,43 +236,46 @@ public class ForceAttractor
     }
 
 
-    private Vector3 vortexUp(float vortexSpeed, float vortexScale, Vector3 distances, Vector3 direction) {
+    private Vector3 vortexUp(float vortexSpeed, float vortexScale, Vector3 distances, Vector3 direction)
+    {
         float distanceX = distances.x;
         float distanceY = distances.y;
         float distanceZ = distances.z;
-        
+
         float factor = 1 / (1 + (distanceX * distanceX + distanceZ * distanceZ) / vortexScale);
 
-        float vx = distanceX  * vortexSpeed * factor;
+        float vx = distanceX * vortexSpeed * factor;
         float vy = distanceY * vortexSpeed * factor;
         float vz = distanceZ * vortexSpeed * factor;
         Vector3 totalForce = Quaternion.AngleAxis(90, Vector3.up) * new Vector3(vx, 0, vz) + (direction);
         return totalForce;
     }
 
-    private Vector3 vortexUpRepulsion(float vortexSpeed, float vortexScale, Vector3 distances, Vector3 direction) {
+    private Vector3 vortexUpRepulsion(float vortexSpeed, float vortexScale, Vector3 distances, Vector3 direction)
+    {
         float distanceX = distances.x;
         float distanceY = distances.y;
         float distanceZ = distances.z;
-        
+
         float factor = 1 / (1 + (distanceX * distanceX + distanceY * distanceY) / vortexScale);
 
-        float vx = distanceX  * vortexSpeed * factor;
+        float vx = distanceX * vortexSpeed * factor;
         float vy = distanceY * vortexSpeed * factor;
         float vz = distanceZ * vortexSpeed * factor;
         Vector3 totalForce = Quaternion.AngleAxis(90, Vector3.up) * new Vector3(vx, vy, vz) + (direction);
         return totalForce;
     }
 
-    private Vector3 vortexForwardRepulsion(float vortexSpeed, float vortexScale, Vector3 distances, Vector3 direction) {
+    private Vector3 vortexForwardRepulsion(float vortexSpeed, float vortexScale, Vector3 distances, Vector3 direction)
+    {
         float distanceX = distances.x;
         float distanceY = distances.y;
         float distanceZ = distances.z;
-        
+
         //float factor = 1 / (1 + (distanceX * distanceX + distanceZ * distanceZ)/ vortexScale);
         float factor = 1 / (1 + (distanceX * distanceX + distanceY * distanceY) / vortexScale);
 
-        float vx = distanceX  * vortexSpeed * factor;
+        float vx = distanceX * vortexSpeed * factor;
         float vy = distanceY * vortexSpeed * factor;
         float vz = Mathf.Clamp(distanceZ * vortexSpeed * factor, -5f, 5f);
 
@@ -281,7 +290,7 @@ public class ForceAttractor
 
         Vector3 direction = Vector3.zero;
         Vector3 totalForce = Vector3.zero;
-        foreach(GameObject a in Attractors)
+        foreach (GameObject a in Attractors)
         {
             direction = (a.transform.position - pos).normalized;
             float magnitude = direction.magnitude;
@@ -299,7 +308,7 @@ public class ForceAttractor
         Vector3 totalForce = Vector3.zero;
         Vector3 force = Vector3.zero;
         int i = 0;
-        foreach(GameObject a in Attractors)
+        foreach (GameObject a in Attractors)
         {
             float dist = Vector3.Distance(pos, a.transform.position) * 100000;
             float fieldMag = 99999 / dist * dist;

@@ -16,8 +16,9 @@ public class CurlNoise
         float frequency,
         float amplitude,
         int octaves,
-        float persistence){
-        
+        float persistence)
+    {
+
         Frequency = frequency;
         Amplitude = amplitude;
         Octaves = octaves;

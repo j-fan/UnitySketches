@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BeatsFFT : MonoBehaviour {
+public class BeatsFFT : MonoBehaviour
+{
     public AudioSource audioSource;
     float[] asamples = new float[64];
     public float avgFreq = 0.0f;

@@ -17,5 +17,5 @@ public class BoundedQueue<T> : Queue<T>
             base.Dequeue();
         }
     }
-    
+
 }

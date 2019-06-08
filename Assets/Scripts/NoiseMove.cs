@@ -13,25 +13,28 @@ public class NoiseMove : MonoBehaviour
     {
         centre = Vector3.zero;
         motionRadius = Random.Range(1f, 4f);
-        seed = Random.Range(1f,9999f);
+        seed = Random.Range(1f, 9999f);
     }
 
     void Update()
     {
-        float t = 1.0f * ( Time.frameCount - 1) / numFrames;
+        float t = 1.0f * (Time.frameCount - 1) / numFrames;
         transform.position = new Vector3(
-            nextX(t, centre.x, motionRadius), 
+            nextX(t, centre.x, motionRadius),
             nextY(t, centre.y, motionRadius),
-            centre.z);   
+            centre.z);
     }
-    private float nextSimplex(float t, float x, float motion_radius, float seed){
-        return x + fastNoise.GetSimplex(seed + motion_radius*Mathf.Cos(Mathf.PI*t),
-                                        motion_radius*Mathf.Sin(Mathf.PI*t));
+    private float nextSimplex(float t, float x, float motion_radius, float seed)
+    {
+        return x + fastNoise.GetSimplex(seed + motion_radius * Mathf.Cos(Mathf.PI * t),
+                                        motion_radius * Mathf.Sin(Mathf.PI * t));
     }
-    private float nextX(float t, float x, float radius){
-    return x + Mathf.Cos(Mathf.PI * 2 *t) * radius;
+    private float nextX(float t, float x, float radius)
+    {
+        return x + Mathf.Cos(Mathf.PI * 2 * t) * radius;
     }
-    private float nextY(float t,float y, float radius){
-    return y + Mathf.Sin(Mathf.PI * 2*t) * radius;
+    private float nextY(float t, float y, float radius)
+    {
+        return y + Mathf.Sin(Mathf.PI * 2 * t) * radius;
     }
 }

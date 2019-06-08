@@ -53,7 +53,9 @@ public class FlowfieldWorms : MonoBehaviour
         if (!CentreObj)
         {
             GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        } else {
+        }
+        else
+        {
             CentreObj = GameObject.Instantiate(CentreObj);
         }
         CentreObj.transform.position = Vector3.zero;
@@ -103,6 +105,7 @@ public class FlowfieldWorms : MonoBehaviour
             case FlowfieldWormBehaviour.CurlNoise:
                 flowVector = curlNoise.calculate(w.position) * CurlSpeed;
 
+                // keep within bounds
                 Vector3 newPos = w.position + flowVector * deltaTime;
                 float dist = Vector3.Distance(newPos, Vector3.zero);
                 float step = attractionSpeed * deltaTime;

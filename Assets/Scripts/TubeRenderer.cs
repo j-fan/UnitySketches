@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
- 
+
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(MeshFilter))]
 public class TubeRenderer : MonoBehaviour
@@ -18,14 +18,14 @@ public class TubeRenderer : MonoBehaviour
 
     Modified by Jane Fan 2019
     */
- 
+
     [Serializable]
     public class TubeVertex
     {
         public Vector3 point = Vector3.zero;
         public float radius = 1.0f;
         public Color color = Color.white;
- 
+
         public TubeVertex(Vector3 pt, float r, Color c)
         {
             point = pt;
@@ -33,7 +33,7 @@ public class TubeRenderer : MonoBehaviour
             color = c;
         }
     }
- 
+
     public TubeVertex[] vertices;
     public Material material;
     public AnimationCurve tubeWidth;
@@ -42,19 +42,19 @@ public class TubeRenderer : MonoBehaviour
     private Vector3[] crossPoints;
     private int lastCrossSegments;
     public float flatAtDistance = -1;
- 
+
     private Vector3 lastCameraPosition1;
     private Vector3 lastCameraPosition2;
     public int movePixelsForRebuild = 6;
     public float maxRebuildTime = 0.1f;
     private float lastRebuildTime = 0.00f;
- 
+
     void Reset()
     {
- 
+
         vertices = new TubeVertex[]
         {
-            new TubeVertex(Vector3.zero, 1.0f, Color.white), 
+            new TubeVertex(Vector3.zero, 1.0f, Color.white),
             new TubeVertex(new Vector3(1,0,0), 1.0f, Color.white),
         };
     }
@@ -63,7 +63,7 @@ public class TubeRenderer : MonoBehaviour
         MeshRenderer mr = gameObject.GetComponent<MeshRenderer>();
         mr.material = material;
     }
- 
+
     void LateUpdate()
     {
         if (null == vertices ||
@@ -72,8 +72,8 @@ public class TubeRenderer : MonoBehaviour
             GetComponent<Renderer>().enabled = false;
             return;
         }
-       GetComponent<Renderer>().enabled = true;
- 
+        GetComponent<Renderer>().enabled = true;
+
         //rebuild the mesh?
         bool re = false;
         float distFromMainCam;
@@ -84,10 +84,10 @@ public class TubeRenderer : MonoBehaviour
             lastCameraPosition1.z = 0;
             Vector3 cur2 = Camera.main.WorldToScreenPoint(vertices[vertices.Length - 1].point);
             lastCameraPosition2.z = 0;
- 
+
             float distance = (lastCameraPosition1 - cur1).magnitude;
             distance += (lastCameraPosition2 - cur2).magnitude;
- 
+
             if (distance > movePixelsForRebuild || Time.time - lastRebuildTime > maxRebuildTime)
             {
                 re = true;
@@ -95,11 +95,11 @@ public class TubeRenderer : MonoBehaviour
                 lastCameraPosition2 = cur2;
             }
         }
- 
+
         if (re)
         {
             //draw tube
- 
+
             if (crossSegments != lastCrossSegments)
             {
                 crossPoints = new Vector3[crossSegments];
@@ -110,7 +110,7 @@ public class TubeRenderer : MonoBehaviour
                 }
                 lastCrossSegments = crossSegments;
             }
- 
+
             Vector3[] meshVertices = new Vector3[vertices.Length * crossSegments];
             Vector2[] uvs = new Vector2[vertices.Length * crossSegments];
             Color[] colors = new Color[vertices.Length * crossSegments];
@@ -118,18 +118,18 @@ public class TubeRenderer : MonoBehaviour
             int[] lastVertices = new int[crossSegments];
             int[] theseVertices = new int[crossSegments];
             Quaternion rotation = Quaternion.identity;
- 
+
             for (int p = 0; p < vertices.Length; p++)
             {
                 if (p < vertices.Length - 1) rotation = Quaternion.FromToRotation(Vector3.forward, vertices[p + 1].point - vertices[p].point);
- 
+
                 for (int c = 0; c < crossSegments; c++)
                 {
                     int vertexIndex = p * crossSegments + c;
                     meshVertices[vertexIndex] = vertices[p].point + rotation * crossPoints[c] * vertices[p].radius;
                     uvs[vertexIndex] = new Vector2((0.0f + c) / crossSegments, (0.0f + p) / vertices.Length);
                     colors[vertexIndex] = vertices[p].color;
- 
+
                     //				print(c+" - vertex index "+(p*crossSegments+c) + " is " + meshVertices[p*crossSegments+c]);
                     lastVertices[c] = theseVertices[c];
                     theseVertices[c] = p * crossSegments + c;
@@ -150,7 +150,7 @@ public class TubeRenderer : MonoBehaviour
                     }
                 }
             }
- 
+
             Mesh mesh = GetComponent<MeshFilter>().mesh;
             if (!mesh)
             {
@@ -162,21 +162,21 @@ public class TubeRenderer : MonoBehaviour
             mesh.uv = uvs;
         }
     }
- 
+
     //sets all the points to points of a Vector3 array, as well as capping the ends.
     public void SetPoints(Vector3[] points, Color col)
     {
         if (points.Length < 2) return;
         vertices = new TubeVertex[points.Length + 2];
- 
+
         Vector3 v0offset = (points[0] - points[1]) * 0.01f;
         vertices[0] = new TubeVertex(v0offset + points[0], 0.0f, col);
         Vector3 v1offset = (points[points.Length - 1] - points[points.Length - 2]) * 0.01f;
         vertices[vertices.Length - 1] = new TubeVertex(v1offset + points[points.Length - 1], 0.0f, col);
- 
+
         for (int p = 0; p < points.Length; p++)
         {
-            vertices[p + 1] = new TubeVertex(points[p], tubeWidth.Evaluate((float)p/points.Length), col);
+            vertices[p + 1] = new TubeVertex(points[p], tubeWidth.Evaluate((float)p / points.Length), col);
         }
     }
 }

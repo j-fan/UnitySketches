@@ -21,7 +21,7 @@ public class StrangeAttractors : MonoBehaviour
     private ParticleSystem.TrailModule particleTrailModule;
     private StrangeAttractor strangeAttractor;
     private float speedModifier = 1.0f;
-    
+
     private void Start()
     {
         // osc.SetAddressHandler("/midi/mixtrack_pro_3/0/3/control_change", OnRightFilter);
@@ -41,26 +41,30 @@ public class StrangeAttractors : MonoBehaviour
             particles = new ParticleSystem.Particle[maxParticles];
         }
         particleSys.GetParticles(particles);
-        
-        for (int i = 0; i < particles.Length; i++){
+
+        for (int i = 0; i < particles.Length; i++)
+        {
             particles[i].velocity = strangeAttractor.Apply(attractorType, particles[i].position);
 
             particles[i].velocity = Vector3.ClampMagnitude(Vector3.Normalize(particles[i].velocity) * 1000 * beatsFFT.avgFreq, 10);
             particles[i].velocity = particles[i].velocity * speedModifier * 4f;
 
             // prevent particles going to infinity
-            if(particles[i].position.magnitude > 800){
+            if (particles[i].position.magnitude > 800)
+            {
                 particles[i].startColor = new Color(0, 0, 0, 0);
             }
         }
-        particleSys.SetParticles(particles,particles.Length);
+        particleSys.SetParticles(particles, particles.Length);
         transform.Rotate(30 * beatsFFT.avgFreq, 40 * beatsFFT.avgFreq, 30 * beatsFFT.avgFreq, Space.World);
         float glowFactor = Mathf.Clamp((beatsFFT.runningAvgFreq * 8), 0.01f, 0.1f);
         particleTrailModule.colorOverTrail = new Color(1f, 1f, 1f, glowFactor);
     }
 
-    private void ScaleAttractorToFitView(){
-        switch(attractorType){
+    private void ScaleAttractorToFitView()
+    {
+        switch (attractorType)
+        {
             case AttractorType.ThreeScroll:
                 transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
                 particleTrailModule.widthOverTrail = 0.4f;
