@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class FlowfieldWorms : MonoBehaviour
 {
+    public bool scriptActive = true;
     public TubeRenderer TubeRenderer;
     public int NumWorms = 20;
     public int MaxWormVertexes = 100;
@@ -17,6 +18,7 @@ public class FlowfieldWorms : MonoBehaviour
     public int Octaves = 1;                         // how many iterations of simplex to use (higher number = more curls)
     public float Persistence = 1f;                  // how much effect each subsequent iteration has (higher number = enhances effect of octave count)
 
+    public BeatsFFT beatsFFT;
     public GameObject CentreObj;
     public FlowfieldWormBehaviour flowfieldWormBehaviour;
     private List<Worm> worms = new List<Worm>();
@@ -24,6 +26,10 @@ public class FlowfieldWorms : MonoBehaviour
     private float attractionSpeed = 3.0f;
     private ForceAttractor forceAttractor;
 
+    private int fadeStep = 0;
+    private int fadeDuration = 3000;
+    private float fade = 0f;
+    
     public enum FlowfieldWormBehaviour
     {
         Vortex,
@@ -41,8 +47,8 @@ public class FlowfieldWorms : MonoBehaviour
         public Vector3 acceleration { get; set; }
         public void update()
         {
+            velocity = Vector3.ClampMagnitude(velocity, 4f);
             velocity += acceleration;
-            velocity = Vector3.ClampMagnitude(velocity, 10f);
             position += velocity;
         }
     }
@@ -82,9 +88,15 @@ public class FlowfieldWorms : MonoBehaviour
         for (int i = 0; i < NumWorms; i++)
         {
             Worm w = worms[i];
-            float deltaTime = Time.deltaTime;
-            updateWorm(w, deltaTime);
+            fadeInOut();
+            w.TubeRenderer.material.color = new Color(fade*0.6f, fade*0.6f, fade*0.6f, fade);
+            updateWorm(w);
         }
+        float beat = 100f * beatsFFT.avgFreq;
+        CentreObj.transform.localScale = Vector3.ClampMagnitude(
+            new Vector3(2f + beat, 2f + beat, 2f + beat) * fade,
+            6f);
+        CentreObj.GetComponentInChildren<Light>().intensity = Mathf.Clamp(beat, 4f, 40f);
     }
 
     Vector3 randomVector()
@@ -95,8 +107,25 @@ public class FlowfieldWorms : MonoBehaviour
                 Random.Range(-0.1f, 0.1f));
     }
 
-    void updateWorm(Worm w, float deltaTime)
+    void fadeInOut(){
+        fadeStep = Mathf.Clamp(fadeStep, 0, fadeDuration);
+        fade = (float)fadeStep / fadeDuration;
+        if (!scriptActive)
+        {
+            fadeStep--;
+        }
+        else
+        {
+            fadeStep++;
+        }
+    }
+    private void updateWorm(Worm w)
     {
+        if(!scriptActive){
+            w.PointsQueue.Enqueue(w.position);
+            w.TubeRenderer.SetPoints(w.PointsQueue.ToArray(), Color.white);
+            return;
+        }
         Vector3 flowVector;
         Vector3 lastPos = w.position;
 
@@ -106,9 +135,9 @@ public class FlowfieldWorms : MonoBehaviour
                 flowVector = curlNoise.calculate(w.position) * CurlSpeed;
 
                 // keep within bounds
-                Vector3 newPos = w.position + flowVector * deltaTime;
+                Vector3 newPos = w.position + flowVector * Time.deltaTime;
                 float dist = Vector3.Distance(newPos, Vector3.zero);
-                float step = attractionSpeed * deltaTime;
+                float step = attractionSpeed * Time.deltaTime;
                 float distanceRatio = Mathf.Clamp(dist, 0, maxDist) / maxDist;
                 newPos = distanceRatio * Vector3.MoveTowards(newPos, Vector3.zero, step) +
                     (1 - distanceRatio) * newPos;
@@ -143,5 +172,7 @@ public class FlowfieldWorms : MonoBehaviour
             w.PointsQueue.Enqueue(w.position);
             w.TubeRenderer.SetPoints(w.PointsQueue.ToArray(), Color.white);
         }
+
+
     }
 }

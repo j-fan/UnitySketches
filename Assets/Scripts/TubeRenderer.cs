@@ -67,7 +67,7 @@ public class TubeRenderer : MonoBehaviour
     void LateUpdate()
     {
         if (null == vertices ||
-            vertices.Length <= 1)
+            vertices.Length < 2)
         {
             GetComponent<Renderer>().enabled = false;
             return;
