@@ -5,7 +5,10 @@ using UnityEngine;
 public class Flocking : MonoBehaviour
 {
     public float perceptionRadius = 1f;
-    public float maxSteeringForce = 0.4f;
+
+    public BeatsFFT beatsFFT;
+    public float maxCohesion = 0.4f;
+    public float maxAlignment = 0.4f;
     private ParticleSystem particleSys;
     private ParticleSystem.MainModule particleSysMain;
     private ParticleSystem.Particle[] particles;
@@ -18,6 +21,9 @@ public class Flocking : MonoBehaviour
     void LateUpdate()
     {
         int maxParticles = particleSysMain.maxParticles;
+        if(!particleSys.emission.enabled){
+            return;
+        }
         if (particles == null || particles.Length < maxParticles)
         {
             particles = new ParticleSystem.Particle[maxParticles];
@@ -52,16 +58,17 @@ public class Flocking : MonoBehaviour
         {
             alignmentSteering /= boidsSeen;
             alignmentSteering -= currentVelocity;
-            alignmentSteering = Vector3.ClampMagnitude(alignmentSteering, maxSteeringForce);
+            alignmentSteering = Vector3.ClampMagnitude(alignmentSteering, maxAlignment);
 
             cohesionSteering /= boidsSeen;
             cohesionSteering -= currentPos;
             cohesionSteering -= currentVelocity;
-            cohesionSteering = Vector3.ClampMagnitude(cohesionSteering, maxSteeringForce);
+            cohesionSteering = Vector3.ClampMagnitude(cohesionSteering, maxCohesion);
 
         }
         currentParticle.velocity += cohesionSteering;
         currentParticle.velocity += alignmentSteering;
+        currentParticle.velocity *= beatsFFT.avgFreq * 40f;
         return currentParticle;
     }
 }

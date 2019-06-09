@@ -59,7 +59,7 @@ public class StrangeAttractors : MonoBehaviour
         // transform.Rotate(30 * beatsFFT.avgFreq, 40 * beatsFFT.avgFreq, 30 * beatsFFT.avgFreq, Space.World);
         transform.Rotate(1, 1, 1, Space.World);
         float glowFactor = Mathf.Clamp((beatsFFT.runningAvgFreq * 8), 0.05f, 5f);
-        particleTrailModule.colorOverTrail = new Color(1f, 1f, 1f, glowFactor);
+        particleTrailModule.colorOverTrail = new Color(0.7f, 0.7f, 0.7f, glowFactor);
     }
 
     private void ScaleAttractorToFitView()

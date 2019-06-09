@@ -24,13 +24,11 @@ public class AudioLineIn : MonoBehaviour
                 //...meaning 44100 Hz can be used as the recording sampling rate  
                 maxFreq = 44100;
             }
-            audioSource.clip = Microphone.Start(device, true, 5, maxFreq);
+            audioSource.clip = Microphone.Start(device, true, 1, maxFreq);
             audioSource.loop = true;
             audioSource.outputAudioMixerGroup = microphoneMixer;
-            while (!(Microphone.GetPosition(null) > 0))
-            {
-                audioSource.Play();
-            }
+            while (!(Microphone.GetPosition(null) > 0)){ }
+            audioSource.Play();
         }
         else
         {
