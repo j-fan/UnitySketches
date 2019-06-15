@@ -92,11 +92,11 @@ public class FlowfieldWorms : MonoBehaviour
             w.TubeRenderer.material.color = new Color(fade*0.6f, fade*0.6f, fade*0.6f, fade);
             updateWorm(w);
         }
-        float beat = 100f * beatsFFT.avgFreq;
+        float beat = 20f * beatsFFT.scaledAvgFreq;
         CentreObj.transform.localScale = Vector3.ClampMagnitude(
             new Vector3(2f + beat, 2f + beat, 2f + beat) * fade,
             6f);
-        CentreObj.GetComponentInChildren<Light>().intensity = Mathf.Clamp(beat, 4f, 40f);
+        CentreObj.GetComponentInChildren<Light>().intensity = beat;
     }
 
     Vector3 randomVector()

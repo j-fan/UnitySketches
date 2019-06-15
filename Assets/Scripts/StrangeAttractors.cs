@@ -46,7 +46,7 @@ public class StrangeAttractors : MonoBehaviour
         {
             particles[i].velocity = strangeAttractor.Apply(attractorType, particles[i].position);
 
-            particles[i].velocity = Vector3.ClampMagnitude(Vector3.Normalize(particles[i].velocity) * 1000 * beatsFFT.avgFreq, 4);
+            particles[i].velocity = Vector3.ClampMagnitude(Vector3.Normalize(particles[i].velocity) * beatsFFT.scaledAvgFreq * 10, 4);
             particles[i].velocity = particles[i].velocity * speedModifier * 4f;
 
             // prevent particles going to infinity
@@ -56,9 +56,9 @@ public class StrangeAttractors : MonoBehaviour
             }
         }
         particleSys.SetParticles(particles, particles.Length);
-        // transform.Rotate(30 * beatsFFT.avgFreq, 40 * beatsFFT.avgFreq, 30 * beatsFFT.avgFreq, Space.World);
+        transform.Rotate(60 * beatsFFT.scaledAvgFreq, 90 * beatsFFT.scaledAvgFreq, 60 * beatsFFT.scaledAvgFreq, Space.World);
         transform.Rotate(1, 1, 1, Space.World);
-        float glowFactor = Mathf.Clamp((beatsFFT.runningAvgFreq * 8), 0.05f, 5f);
+        float glowFactor = Mathf.Clamp((beatsFFT.scaledAvgFreq * 10), 0.05f, 5f);
         particleTrailModule.colorOverTrail = new Color(0.7f, 0.7f, 0.7f, glowFactor);
     }
 
