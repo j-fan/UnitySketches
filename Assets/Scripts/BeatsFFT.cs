@@ -50,6 +50,6 @@ public class BeatsFFT : MonoBehaviour
             avgFreq *= 1000;
             runningAvgFreq *= 1000;
         }
-        
+
     }
 }

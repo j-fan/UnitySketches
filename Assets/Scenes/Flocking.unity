@@ -502,6 +502,9 @@ MonoBehaviour:
   audioSource: {fileID: 2008681525}
   avgFreq: 0
   runningAvgFreq: 0
+  scaledAvgFreq: 0
+  maxFreq: -3.4028235e+38
+  minFreq: 3.4028235e+38
 --- !u!4 &2008681527
 Transform:
   m_ObjectHideFlags: 0
@@ -5302,4 +5305,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   perceptionRadius: 1
-  maxSteeringForce: 0.2
+  beatsFFT: {fileID: 0}
+  maxCohesion: 0.4
+  maxAlignment: 0.4

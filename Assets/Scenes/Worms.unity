@@ -608,5 +608,15 @@ PrefabInstance:
       propertyPath: TubeRenderer
       value: 
       objectReference: {fileID: 666586527}
+    - target: {fileID: 8675487953597540842, guid: 6e1df756edab1b645abe94779bf8a9c8,
+        type: 3}
+      propertyPath: flowfieldWormBehaviour
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8675487953597540844, guid: 6e1df756edab1b645abe94779bf8a9c8,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6e1df756edab1b645abe94779bf8a9c8, type: 3}

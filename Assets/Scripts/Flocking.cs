@@ -68,7 +68,9 @@ public class Flocking : MonoBehaviour
         }
         currentParticle.velocity += cohesionSteering;
         currentParticle.velocity += alignmentSteering;
-        currentParticle.velocity *= beatsFFT.avgFreq * 40f;
+        if(beatsFFT){
+            currentParticle.velocity *= beatsFFT.scaledAvgFreq * 10f;
+        }
         return currentParticle;
     }
 }

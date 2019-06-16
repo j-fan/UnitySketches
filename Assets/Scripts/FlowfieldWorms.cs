@@ -27,9 +27,9 @@ public class FlowfieldWorms : MonoBehaviour
     private ForceAttractor forceAttractor;
 
     private int fadeStep = 0;
-    private int fadeDuration = 3000;
-    private float fade = 0f;
-    
+    private int fadeDuration = 30;
+    private float currentFade = 0f;
+
     public enum FlowfieldWormBehaviour
     {
         Vortex,
@@ -88,14 +88,18 @@ public class FlowfieldWorms : MonoBehaviour
         for (int i = 0; i < NumWorms; i++)
         {
             Worm w = worms[i];
-            fadeInOut();
-            w.TubeRenderer.material.color = new Color(fade*0.6f, fade*0.6f, fade*0.6f, fade);
+            w.TubeRenderer.material.color = new Color(currentFade * 0.6f, currentFade * 0.6f, currentFade * 0.6f, currentFade);
             updateWorm(w);
         }
-        float beat = 20f * beatsFFT.scaledAvgFreq;
+        float beat = 1f;
+        if (beatsFFT)
+        {
+            beat = 20f * beatsFFT.scaledAvgFreq;
+
+        }
+        fadeInOut();
         CentreObj.transform.localScale = Vector3.ClampMagnitude(
-            new Vector3(2f + beat, 2f + beat, 2f + beat) * fade,
-            6f);
+            new Vector3(2f + beat, 2f + beat, 2f + beat) * currentFade, 6f);
         CentreObj.GetComponentInChildren<Light>().intensity = beat;
     }
 
@@ -107,9 +111,10 @@ public class FlowfieldWorms : MonoBehaviour
                 Random.Range(-0.1f, 0.1f));
     }
 
-    void fadeInOut(){
+    void fadeInOut()
+    {
         fadeStep = Mathf.Clamp(fadeStep, 0, fadeDuration);
-        fade = (float)fadeStep / fadeDuration;
+        currentFade = (float)fadeStep / fadeDuration;
         if (!scriptActive)
         {
             fadeStep--;
@@ -121,7 +126,8 @@ public class FlowfieldWorms : MonoBehaviour
     }
     private void updateWorm(Worm w)
     {
-        if(!scriptActive){
+        if (!scriptActive)
+        {
             w.PointsQueue.Enqueue(w.position);
             w.TubeRenderer.SetPoints(w.PointsQueue.ToArray(), Color.white);
             return;
